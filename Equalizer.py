@@ -3,17 +3,32 @@ from scipy import fftpack
 import streamlit as st
 import  streamlit_vertical_slider  as svs
 import pandas as pd
+import functions 
+
+
 st.set_page_config(layout="wide")
 
+if 'play_state' not in st.session_state:
+     st.session_state['play_state']= True
+
+
+if 'uploaded' not in st.session_state:
+     st.session_state['uploaded']= False
 # ------------------------------------------------------------------Upload_file----------------------------------------------------------------------------------------------------------------------------------------------
 uploaded_file = st.file_uploader("Upload CSV",type=["csv"])
 if uploaded_file is not None:
+    st.session_state['uploaded']= True
     df = pd.read_csv(uploaded_file)
     
     list_of_columns=df.columns
     x_axis = df[list_of_columns[0]].to_numpy()
     y_axis = df[list_of_columns[1]].to_numpy()
 
+
+
+
+st.button('Play' if st.session_state['play_state'] else 'Pause',
+disabled= not st.session_state['uploaded'], on_click= functions.Change_play_State())
 # -------------------------------------------------------------------sliders---------------------------------------------------------------------------------------------------------------------------------------------
 	
 min_value=0
