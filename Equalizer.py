@@ -8,6 +8,8 @@ import functions
 
 st.set_page_config(layout="wide")
 
+
+#-----------------------------------------------------------------session state-------------------------------------------------------------------------------------------------------------------------------------
 if 'play_state' not in st.session_state:
      st.session_state['play_state']= True
 
@@ -24,11 +26,6 @@ if uploaded_file is not None:
     x_axis = df[list_of_columns[0]].to_numpy()
     y_axis = df[list_of_columns[1]].to_numpy()
 
-
-
-
-st.button('Play' if st.session_state['play_state'] else 'Pause',
-disabled= not st.session_state['uploaded'], on_click= functions.Change_play_State())
 # -------------------------------------------------------------------sliders---------------------------------------------------------------------------------------------------------------------------------------------
 	
 min_value=0
@@ -60,3 +57,9 @@ peak_freq = amp_freq[1, amp_position]
 high_freq_fft = sig_fft.copy()
 high_freq_fft[np.abs(sample_freq)> peak_freq]=0
 filtered_Sig=fftpack.ifft(high_freq_fft) # return discrete inverse fourier transform of real or complex sequence
+
+
+#-----------------------------------------------------Play Button-------------------------------------------------------------------------------------------------------------------------------------------------
+
+st.button('Play' if st.session_state['play_state'] else 'Pause',
+disabled= not st.session_state['uploaded'], on_click= functions.Change_play_State())
