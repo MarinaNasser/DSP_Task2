@@ -4,6 +4,10 @@ import streamlit as st
 import  streamlit_vertical_slider  as svs
 import pandas as pd
 import functions 
+from pydub import AudioSegment
+from pydub.playback import play
+from scipy.io.wavfile import read
+import os.path
 
 
 st.set_page_config(layout="wide")
@@ -11,22 +15,45 @@ st.set_page_config(layout="wide")
 
 #-----------------------------------------------------------------session state-------------------------------------------------------------------------------------------------------------------------------------
 if 'play_state' not in st.session_state:
-     st.session_state['play_state']= True
+     st.session_state['play_state']= False
 
 
 if 'uploaded' not in st.session_state:
      st.session_state['uploaded']= False
-# ------------------------------------------------------------------Upload_file----------------------------------------------------------------------------------------------------------------------------------------------
-uploaded_file = st.file_uploader("Upload CSV",type=["csv"])
+#------------------------------------------------------------------Upload_file----------------------------------------------------------------------------------------------------------------------------------------------
+
+uploaded_file = st.file_uploader("uploader",key="uploaded_file",label_visibility="hidden")
+
 if uploaded_file is not None:
     st.session_state['uploaded']= True
-    df = pd.read_csv(uploaded_file)
-    
-    list_of_columns=df.columns
-    x_axis = df[list_of_columns[0]].to_numpy()
-    y_axis = df[list_of_columns[1]].to_numpy()
+    file_name=uploaded_file.name
+    ext = os.path.splitext(file_name)[1][1:]
+    # st.write(ext)
 
-# -------------------------------------------------------------------sliders---------------------------------------------------------------------------------------------------------------------------------------------
+
+    if ext=='csv':
+        df = pd.read_csv(uploaded_file)
+        list_of_columns=df.columns
+        x_axis = df[list_of_columns[0]].to_numpy()
+        y_axis = df[list_of_columns[1]].to_numpy()
+
+
+    elif ext=='wav':
+        data, samplerate  = functions.handle_uploaded_audio_file(uploaded_file)
+        duration = len(data)/samplerate
+        # st.write("Duration of Audio in Seconds", duration)
+        # st.write("Duration of Audio in Minutes", duration/60)
+        functions.showthesignal(duration,samplerate,data)
+
+#-----------------------------------------------------Play Button-------------------------------------------------------------------------------------------------------------------------------------------------
+
+    st.button(label= "DISPLAY" ,#if not st.session_state["play_state"] else "PAUSE", 
+    disabled= not st.session_state['uploaded'], on_click= functions.Change_play_State())
+
+    if not st.session_state["play_state"]:
+        st.audio(file_name)
+ 
+#-------------------------------------------------------sliders---------------------------------------------------------------------------------------------------------------------------------------------
 	
 min_value=0
 max_value=0
@@ -59,7 +86,15 @@ high_freq_fft[np.abs(sample_freq)> peak_freq]=0
 filtered_Sig=fftpack.ifft(high_freq_fft) # return discrete inverse fourier transform of real or complex sequence
 
 
-#-----------------------------------------------------Play Button-------------------------------------------------------------------------------------------------------------------------------------------------
 
-st.button('Play' if st.session_state['play_state'] else 'Pause',
-disabled= not st.session_state['uploaded'], on_click= functions.Change_play_State())
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+# # Filter the beat at 3kHz
+# filtered = uploaded_file.low_pass_filter(3000)
+# # Mix our filtered beat with the new loop at -3dB
+# final = filtered.overlay(loop2 - 3, loop=True)
+
+
+ 
+#-------------------------------------------------------save--------------------------------------------------------------------------------------------------------
+
