@@ -40,9 +40,18 @@ if uploaded_file is not None:
 
 
     elif ext=='wav':
+        # functions.Audio_player(uploaded_file)
         data, samplerate  = functions.handle_uploaded_audio_file(uploaded_file)
         duration = len(data)/samplerate
         time = np.arange(0,duration,1/samplerate)
+        amplitude,phase,frequency=functions.Fourier_transform(data,samplerate)
+        List_freq_axis, List_amplitude_axis,bin_max_frequency_value=functions.bins_separation(frequency, amplitude)
+        sliders_date=functions.generate_sliders(bin_max_frequency_value)
+        functions.generate_sliders(bin_max_frequency_value)
+
+
+
+
         # st.write("Duration of Audio in Seconds", duration)
         # st.write("Duration of Audio in Minutes", duration/60)
         functions.show_signal(time,data)
@@ -56,19 +65,19 @@ if uploaded_file is not None:
         st.audio(file_name)
  
 #-------------------------------------------------------sliders---------------------------------------------------------------------------------------------------------------------------------------------
-	
-min_value=0
-max_value=0
-boundary = int(50)
-sliders = {}
-adjusted_data = []
-columns = st.columns(10)
-for i in range(10):
-    key=i
-    min_value = 1- boundary
-    max_value = 1 + boundary
-    with columns[i]:
-        slider1=svs.vertical_slider(key=key, default_value=1, step=1, min_value=min_value, max_value=max_value)
+
+# min_value=0
+# max_value=0
+# boundary = int(50)
+# sliders = {}
+# adjusted_data = []
+# columns = st.columns(10)
+# for i in range(10):
+#     key=i
+#     min_value = 1- boundary
+#     max_value = 1 + boundary
+#     with columns[i]:
+#         slider1=svs.vertical_slider(key=key, default_value=1, step=1, min_value=min_value, max_value=max_value)
         
 # ----------------------------------------------------------------------fourier-------------------------------------------------------------------------------------------------------------------------------------------------------
 time_step=0.05
@@ -86,8 +95,6 @@ peak_freq = amp_freq[1, amp_position]
 high_freq_fft = sig_fft.copy()
 high_freq_fft[np.abs(sample_freq)> peak_freq]=0
 filtered_Sig=fftpack.ifft(high_freq_fft) # return discrete inverse fourier transform of real or complex sequence
-
-
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
