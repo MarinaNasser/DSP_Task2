@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import scipy as sc
 from scipy.fftpack import fft
 import  streamlit_vertical_slider  as svs
+import itertools
 
 
 
@@ -41,6 +42,7 @@ def Fourier_transform(data, samplerate):
     frequency =sc.fft.rfftfreq(len(data),1/samplerate)
     return amplitude,phase,frequency
 
+
 def bins_separation(frequency, amplitude):
     freq_axis_list = []
     amplitude_axis_list = []
@@ -58,11 +60,12 @@ def bins_separation(frequency, amplitude):
 def generate_sliders(bin_max_frequency_value):
         min_value=0
         max_value=0
+        sliders_data = []
         boundary = int(50)
         sliders = {}
         adjusted_data = []
         columns = st.columns(10)
-        for i in range(10):
+        for i in range(0, 10):
             key=i
             min_value = 1- boundary
             max_value = 1 + boundary
@@ -70,7 +73,7 @@ def generate_sliders(bin_max_frequency_value):
                 var = (i+1)*bin_max_frequency_value
                 slider1=svs.vertical_slider(key=key, default_value=1, step=1, min_value=min_value, max_value=max_value)
                 st.write(f" { var } HZ")
+                sliders_data.append(slider1)
+        return sliders_data
                 
-
-
 
