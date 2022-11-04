@@ -3,9 +3,7 @@ from scipy import fftpack
 import streamlit as st
 import  streamlit_vertical_slider  as svs
 import pandas as pd
-import functions 
-from pydub import AudioSegment
-from pydub.playback import play
+import functions as functions 
 from scipy.io.wavfile import read
 import os.path
 
@@ -46,7 +44,8 @@ if uploaded_file is not None:
         time = np.arange(0,duration,1/samplerate)
         amplitude,phase,frequency=functions.Fourier_transform(data,samplerate)
         List_freq_axis, List_amplitude_axis,bin_max_frequency_value=functions.bins_separation(frequency, amplitude)
-        sliders_date=functions.generate_sliders(bin_max_frequency_value)
+        #sliders_date=functions.generate_sliders(bin_max_frequency_value)
+        st.write(bin_max_frequency_value)
         functions.generate_sliders(bin_max_frequency_value)
 
 
@@ -66,19 +65,6 @@ if uploaded_file is not None:
  
 #-------------------------------------------------------sliders---------------------------------------------------------------------------------------------------------------------------------------------
 
-# min_value=0
-# max_value=0
-# boundary = int(50)
-# sliders = {}
-# adjusted_data = []
-# columns = st.columns(10)
-# for i in range(10):
-#     key=i
-#     min_value = 1- boundary
-#     max_value = 1 + boundary
-#     with columns[i]:
-#         slider1=svs.vertical_slider(key=key, default_value=1, step=1, min_value=min_value, max_value=max_value)
-        
 # ----------------------------------------------------------------------fourier-------------------------------------------------------------------------------------------------------------------------------------------------------
 time_step=0.05
 time_vec=np.arange(0,10,time_step) #return evenly spaced time vector between [0,10]
@@ -106,4 +92,3 @@ filtered_Sig=fftpack.ifft(high_freq_fft) # return discrete inverse fourier trans
 
  
 #-------------------------------------------------------save--------------------------------------------------------------------------------------------------------
-
