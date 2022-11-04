@@ -36,14 +36,16 @@ if uploaded_file is not None:
         list_of_columns=df.columns
         x_axis = df[list_of_columns[0]].to_numpy()
         y_axis = df[list_of_columns[1]].to_numpy()
+        functions.show_signal(x_axis,y_axis)
 
 
     elif ext=='wav':
         data, samplerate  = functions.handle_uploaded_audio_file(uploaded_file)
         duration = len(data)/samplerate
+        time = np.arange(0,duration,1/samplerate)
         # st.write("Duration of Audio in Seconds", duration)
         # st.write("Duration of Audio in Minutes", duration/60)
-        functions.showthesignal(duration,samplerate,data)
+        functions.show_signal(time,data)
 
 #-----------------------------------------------------Play Button-------------------------------------------------------------------------------------------------------------------------------------------------
 

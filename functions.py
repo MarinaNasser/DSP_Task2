@@ -18,13 +18,9 @@ def handle_uploaded_audio_file(uploaded_file):
     
     return fp_arr,  48000 #22050 
 
-
-
-def showthesignal(duration , samplerate, data):
-    time = np.arange(0,duration,1/samplerate)
-    # Plotting the Graph using Matplotlib
+def show_signal(x_axis,y_axis):
     SignalFigure, SignalAxis = plt.subplots(1, 1)
-    SignalAxis.plot(time,data)
+    SignalAxis.plot(x_axis,y_axis)
     plt.xlabel('Time [s]')
     plt.ylabel('Amplitude')
     st.plotly_chart(SignalFigure,use_container_width=True)
