@@ -6,6 +6,8 @@ import pandas as pd
 import functions as functions 
 from scipy.io.wavfile import read
 import os.path
+import IPython.display as ipd
+
 
 
 st.set_page_config(layout="wide")
@@ -43,10 +45,16 @@ if uploaded_file is not None:
         duration = len(data)/samplerate
         time = np.arange(0,duration,1/samplerate)
         amplitude,phase,frequency=functions.Fourier_transform(data,samplerate)
-        List_freq_axis, List_amplitude_axis,bin_max_frequency_value=functions.bins_separation(frequency, amplitude)
+        freq_axis_list, amplitude_axis_list,bin_max_frequency_value=functions.bins_separation(frequency, amplitude)
         #sliders_date=functions.generate_sliders(bin_max_frequency_value)
-        st.write(bin_max_frequency_value)
-        functions.generate_sliders(bin_max_frequency_value)
+        # st.write(bin_max_frequency_value)
+        sliders_data=functions.generate_sliders(bin_max_frequency_value)
+        # mod_amplitude_axis_list,empty=functions.sound_modification(sliders_data,amplitude_axis_list)
+        # phase=phase[:len(mod_amplitude_axis_list):1]
+        # ifft_file=functions.inverse_fourier(mod_amplitude_axis_list,phase)    # generate = st.button('Generate')
+        # uploaded_file=ipd.Audio(ifft_file,rate=samplerate/2)
+        # empty.write(uploaded_file)
+        # frequency=frequency[:len(mod_amplitude_axis_list):1]
 
 
 

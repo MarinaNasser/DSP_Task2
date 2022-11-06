@@ -76,3 +76,19 @@ def generate_sliders(bin_max_frequency_value):
                     var = 1
                 sliders_data.append(slider1)
         return sliders_data
+
+# def sound_modification(sliders_data,amplitude_axis_list):
+#     empty = st.empty()
+#     empty.empty()
+#     modified_bins=[]
+#     for i in range(0,10):
+#         modified_bins.append( 10**(sliders_data[i]/20) * amplitude_axis_list[i])
+#     st.write(modified_bins)
+#     st.write(sliders_data)
+#     mod_amplitude_axis_list=list(itertools.chain.from_iterable(modified_bins))
+#     return mod_amplitude_axis_list,empty
+
+# def inverse_fourier(mod_amplitude_axis_list,phase):
+#     amplitude_modified=np.multiply(mod_amplitude_axis_list,np.exp(1j*phase))
+#     ifft_file=sc.ifft(amplitude_modified)
+#     return ifft_file
