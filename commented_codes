@@ -1,0 +1,63 @@
+        
+#-----------------------------------------------------Play Button-------------------------------------------------------------------------------------------------------------------------------------------------
+
+        # st.button(label= "DISPLAY" ,#if not st.session_state["play_state"] else "PAUSE", 
+        # disabled= not st.session_state['uploaded'], on_click= functions.Change_play_State())
+
+        # if not st.session_state["play_state"]:
+        #     st.audio(file_name)
+
+# ----------------------------------------------------------------------fourier-------------------------------------------------------------------------------------------------------------------------------------------------------
+time_step=0.05
+time_vec=np.arange(0,10,time_step) #return evenly spaced time vector between [0,10]
+period=5 
+sig=(np.sin(2*np.pi*time_vec/period))+ 0.25*np.random.randn(time_vec.size) #for every 5*5 points, it completes a 1/4 cycle or every 20*5 points it completes 1 cycle +noise
+sig_fft=fftpack.fft(sig)
+amplitude=np.abs(sig_fft)
+power=amplitude**2
+phase=np.angle(sig_fft) #np.angle() return the angle of the complex argument
+sample_freq=fftpack.fftfreq(sig.size, d=time_step) #return the discrete fourier transform sample frequencies
+amp_freq=np.array([amplitude,sample_freq])
+amp_position= amp_freq[0,:].argmax()
+peak_freq = amp_freq[1, amp_position]
+high_freq_fft = sig_fft.copy()
+high_freq_fft[np.abs(sample_freq)> peak_freq]=0
+filtered_Sig=fftpack.ifft(high_freq_fft) # return discrete inverse fourier transform of real or complex sequence
+
+
+def remove_noise(original_Signal,sample_freq,peak_freq):
+    original_Signal[np.abs(sample_freq)> peak_freq]=0
+    filtered_Sig=fft.ifft(original_Signal) # return discrete inverse fourier transform of real or complex sequence
+    return filtered_Sig
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+# # Filter the beat at 3kHz
+# filtered = uploaded_file.low_pass_filter(3000)
+# # Mix our filtered beat with the new loop at -3dB
+# final = filtered.overlay(loop2 - 3, loop=True)
+
+
+ 
+#-------------------------------------------------------save--------------------------------------------------------------------------------------------------------
+# finalSignalFigure1, finalSignalAxis1 = plt.subplot(2,1,1)
+# plt.figure(figsize=(10, 8))
+# plt.subplot(2,1,1)
+# plt.plot(time, equalized,'-b',label=r"$Filtered amplitude(t)$")
+# plt.xlabel('time[s]')
+# finalSignalFigure2, finalSignalAxis2 = plt.subplot(2,1,1)
+# # plt.plot(time, data,'-r',label=r"$Original amplitude(t)$")
+# plt.xlabel('time[s]')
+# plt.legend()
+# plt.grid()
+# finalSignalAxis1.plot(time, equalized,linewidth=4)
+# finalSignalAxis2.plot(time, data,linewidth=4)
+# plt.subplot(2,1,2)
+# plt.plot(f[:N//2],np.abs(F_data[:N//2]),'-r',label=r"$Original magnitude(f)$")
+# plt.xlabel('f [Hz]')
+# plt.xlim([0,5e3])
+# plt.plot(f[:N//2],np.abs(Y[:N//2]),'-b',label=r"$Filtered magnitude(f)$")
+# plt.xlabel('f [Hz]')
+# plt.xlim([0,5e3])
+# plt.legend()
+# plt.tight_layout()
+# plt.grid()
