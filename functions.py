@@ -16,8 +16,8 @@ def Change_play_State():
 
 #-----------------------------------------------------------get Fmax----------------------------------------------------------------
 def getFMax(xAxis,yAxis):
-    amplitude = np.abs(fft.rfft(yAxis))
-    frequency = fft.rfftfreq(len(xAxis), (xAxis[1]-xAxis[0]))
+    amplitude = np.abs(sc.fft.rfft(yAxis))
+    frequency = sc.fft.rfftfreq(len(xAxis), (xAxis[1]-xAxis[0]))
     indices = find_peaks(amplitude)
     if len(indices[0])>0 :
         max_freq=round(frequency[indices[0][-1]])
