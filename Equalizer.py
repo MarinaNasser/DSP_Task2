@@ -21,8 +21,6 @@ if 'play_state' not in st.session_state:
 if 'uploaded' not in st.session_state:
      st.session_state['uploaded']= False
 
-if 'slider' not in st.session_state:
-     st.session_state['slider']= 0
 #------------------------------------------------------------------Upload_file----------------------------------------------------------------------------------------------------------------------------------------------
 
 uploaded_file = st.sidebar.file_uploader("uploader",key="uploaded_file",label_visibility="hidden")
