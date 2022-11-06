@@ -53,8 +53,19 @@ if uploaded_file is not None:
         
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     fft_sig, amplitude,phase,sample_frequency=functions.Fourier_transform(data,samplerate)
-    List_freq_axis, List_amplitude_axis,bin_max_frequency_value=functions.bins_separation(sample_frequency, amplitude)
+    freq_axis_list, amplitude_axis_list,bin_max_frequency_value=functions.bins_separation(sample_frequency, amplitude)
     # st.write(bin_max_frequency_value)
     sliders_data=functions.generate_sliders(bin_max_frequency_value)
+    mod_amplitude_axis_list,empty= functions.sound_modification(sliders_data,amplitude_axis_list)
+    modified_time_axis=np.linspace(0, duration, len(mod_amplitude_axis_list))
+    phase=phase[:len(mod_amplitude_axis_list):1]
+    ifft_file=functions.inverse_fourier(mod_amplitude_axis_list,phase) 
+    uploaded_file=ipd.Audio(ifft_file,rate=samplerate/2)
+    empty.write(uploaded_file)
+    frequency= sample_frequency[:len(mod_amplitude_axis_list):1]
+
+
+
+
     functions.show_signal(time,data) #plots wav file data in time domain
     functions.plot_spectrogram(data,samplerate)

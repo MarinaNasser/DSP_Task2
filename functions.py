@@ -9,6 +9,8 @@ from scipy.signal import find_peaks
 import  streamlit_vertical_slider  as svs
 import librosa
 import librosa.display
+import itertools
+
 
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 def Change_play_State():
@@ -71,20 +73,35 @@ def generate_sliders(bin_max_frequency_value):
         max_value=0
         sliders_data = []
         boundary = int(50)
-        sliders = {}
-        adjusted_data = []
         columns = st.columns(10)
         for i in range(0, 10):
             with columns[i]:
                 min_value = 1- boundary
                 max_value = 1 + boundary
-                var = (i+1)*bin_max_frequency_value
+                frequency_val = (i+1)*bin_max_frequency_value
                 slider1=svs.vertical_slider(key=i, default_value=1, step=1, min_value=min_value, max_value=max_value)
-                st.write(f" { var } HZ")
-                if var == None:
-                    var = 1
+                st.write(f" { frequency_val } HZ")
+                if slider1 == None:
+                    slider1 = 1
                 sliders_data.append(slider1)
         return sliders_data
+
+
+def sound_modification(sliders_data,List_amplitude_axis):
+    empty = st.empty()
+    empty.empty()
+    modified_bins=[]
+    for i in range(0,10):
+        modified_bins.append( 10**(sliders_data[i]/20) * List_amplitude_axis[i])
+    
+    mod_amplitude_axis_list=list(itertools.chain.from_iterable(modified_bins))
+    return mod_amplitude_axis_list,empty
+
+def inverse_fourier(mod_amplitude_axis_list,phase):
+    modified_signal=np.multiply(mod_amplitude_axis_list,np.exp(1j*phase))
+    ifft_file=sc.ifft(modified_signal)
+    return ifft_file
+
 
 #-----------------------------------------------------------------spectrogram-----------------------------------------------------------------------------------------------------------------------------------
 def plot_spectrogram(data,samplerate):
@@ -99,4 +116,3 @@ def plot_spectrogram(data,samplerate):
                              hop_length=HOP_SIZE, 
                              x_axis="time")
     plt.colorbar(format="%+2.f")
-
