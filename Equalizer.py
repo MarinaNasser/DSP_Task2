@@ -36,13 +36,12 @@ if uploaded_file is not None:
     if ext=='csv':
         df = pd.read_csv(uploaded_file)
         list_of_columns=df.columns
-        x_axis = df[list_of_columns[0]].to_numpy()
+        time = df[list_of_columns[0]].to_numpy()
         data = df[list_of_columns[1]].to_numpy()
         functions.show_signal(x_axis,data)
         max_freq=functions.getFMax(x_axis,data)
-        nequist_freq=2*max_freq
+        samplerate=2*max_freq
        
-
 
 #------------------------------------------------------------------wav----------------------------------------------------------------------------------------------------------------------------------------------
     elif ext=='wav':
