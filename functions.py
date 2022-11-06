@@ -36,11 +36,12 @@ def show_signal(x_axis,y_axis):
 
 # get the fourier transform of the file
 def Fourier_transform(data, samplerate):
-    fft_file = np.fft.fft(data)
-    amplitude= np.abs(fft_file)
-    phase =np.angle(fft_file)
-    frequency =sc.fft.rfftfreq(len(data),1/samplerate)
-    return amplitude,phase,frequency
+    time_step=1/samplerate
+    fft_sig = np.fft.fft(data)
+    amplitude= np.abs(fft_sig)
+    phase =np.angle(fft_sig) #np.angle() return the angle of the complex argument
+    sample_frequency =sc.fft.rfftfreq(len(data),d=time_step)  #return the discrete fourier transform sample frequencies
+    return fft_sig, amplitude,phase,sample_frequency
 
 
 def bins_separation(frequency, amplitude):
@@ -70,9 +71,12 @@ def generate_sliders(bin_max_frequency_value):
                 min_value = 1- boundary
                 max_value = 1 + boundary
                 var = (i+1)*bin_max_frequency_value
-                slider1=svs.vertical_slider(key=i, default_value=1, step=1, min_value=min_value, max_value=max_value)
+                slider=svs.vertical_slider(key=f"slider{i}", default_value=1, step=1, min_value=min_value, max_value=max_value)
                 st.write(f" { var } HZ")
                 if var == None:
                     var = 1
-                sliders_data.append(slider1)
+                sliders_data.append(slider)
         return sliders_data
+
+
+
