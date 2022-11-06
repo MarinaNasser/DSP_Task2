@@ -38,7 +38,6 @@ if uploaded_file is not None:
         list_of_columns=df.columns
         time = df[list_of_columns[0]].to_numpy()
         data = df[list_of_columns[1]].to_numpy()
-        functions.show_signal(time,data)
         max_freq=functions.getFMax(time,data)
         samplerate=2*max_freq
        
