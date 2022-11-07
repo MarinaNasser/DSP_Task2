@@ -16,7 +16,7 @@ import itertools
 def Change_play_State():
     st.session_state['play_state']=  not st.session_state['play_state']
 
-#-----------------------------------------------------------get Fmax----------------------------------------------------------------
+#--------------------------------------------------------------------------get Fmax----------------------------------------------------------------
 def getFMax(xAxis,yAxis):
     amplitude = np.abs(sc.fft.rfft(yAxis))
     frequency = sc.fft.rfftfreq(len(xAxis), (xAxis[1]-xAxis[0]))
@@ -79,15 +79,15 @@ def generate_sliders(bin_max_frequency_value):
                 min_value = 1- boundary
                 max_value = 1 + boundary
                 frequency_val = (i+1)*bin_max_frequency_value
-                slider1=svs.vertical_slider(key=i, default_value=1, step=1, min_value=min_value, max_value=max_value)
+                slider=svs.vertical_slider(key=i, default_value=1, step=1, min_value=min_value, max_value=max_value)
                 st.write(f" { frequency_val } HZ")
-                if slider1 == None:
-                    slider1 = 1
-                sliders_data.append(slider1)
+                if slider == None:
+                    slider = 1
+                sliders_data.append(slider)
         return sliders_data
 
 
-def sound_modification(sliders_data,List_amplitude_axis):
+def sound_modification(sliders_data , List_amplitude_axis):
     empty = st.empty()
     empty.empty()
     modified_bins=[]
@@ -97,6 +97,7 @@ def sound_modification(sliders_data,List_amplitude_axis):
     mod_amplitude_axis_list=list(itertools.chain.from_iterable(modified_bins))
     return mod_amplitude_axis_list,empty
 
+
 def inverse_fourier(mod_amplitude_axis_list,phase):
     modified_signal=np.multiply(mod_amplitude_axis_list,np.exp(1j*phase))
     ifft_file=sc.ifft(modified_signal)
@@ -104,15 +105,33 @@ def inverse_fourier(mod_amplitude_axis_list,phase):
 
 
 #-----------------------------------------------------------------spectrogram-----------------------------------------------------------------------------------------------------------------------------------
-def plot_spectrogram(data,samplerate):
-    FRAME_SIZE = 2048
-    HOP_SIZE = 512
-    S_scale = librosa.stft(data, n_fft=FRAME_SIZE, hop_length=HOP_SIZE)
-    Y_scale = np.abs(S_scale) ** 2
-    Y_log_scale = librosa.power_to_db(Y_scale)
-    plt.figure(figsize=(25, 10))
-    librosa.display.specshow(Y_log_scale, 
-                             sr=samplerate, 
-                             hop_length=HOP_SIZE, 
-                             x_axis="time")
-    plt.colorbar(format="%+2.f")
+def plot_spectrogram(data,ifft_file,samplerate,mod_amplitude_axis_list):
+
+    # yticks for spectrograms
+    helper = [0, 2500, 5000, 7500, 10000, 12500, 15000, 17500, 20000]
+    spec_yticks = [6.28 * i for i in helper]
+
+    st.sidebar.markdown('## Spectrogram')
+    spec1 = st.sidebar.checkbox("Show", key=2)
+    
+    fig2, ax = plt.subplots(1, 2, figsize=(30, 15))
+   
+    ax[0].specgram(data, Fs=samplerate)
+    ax[0].set_xlabel(xlabel='Time [sec]', size=25)
+    ax[0].set_ylabel(ylabel='Frequency Amplitude [rad/s]', size=25)
+    ax[0].set_yticks(helper)
+    ax[0].set_yticklabels(spec_yticks)
+    ax[0].set_title("Original signal", fontsize=30)
+    ax[0].tick_params(axis='both', which='both', labelsize=18)
+
+    ax[1].specgram(ifft_file, Fs=samplerate)
+    ax[1].set_xlabel(xlabel='Time [sec]', size=25)
+    ax[1].set_ylabel(ylabel='Frequency Amplitude [rad/s]', size=25)
+    ax[1].set_yticks(helper)
+    ax[1].set_yticklabels(spec_yticks)
+    ax[1].set_title("Modified signal", fontsize=30)
+    ax[1].tick_params(axis='both', which='both', labelsize=18)
+    if spec1:
+        st.pyplot(fig2)
+
+   

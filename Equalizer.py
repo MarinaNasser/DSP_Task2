@@ -7,8 +7,9 @@ import functions as functions
 from scipy.io.wavfile import read
 import os.path
 import IPython.display as ipd
+import scipy 
 
-
+import matplotlib.pyplot as plt
 
 st.set_page_config(layout="wide")
 
@@ -48,7 +49,7 @@ if uploaded_file is not None:
         data, samplerate  = functions.handle_uploaded_audio_file(uploaded_file)
         duration = len(data)/samplerate
         time = np.arange(0,duration,1/samplerate)
-        st.write("Original Sound")
+        st.markdown('# Original Signal')
         st.audio(file_name)
         
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -56,16 +57,14 @@ if uploaded_file is not None:
     freq_axis_list, amplitude_axis_list,bin_max_frequency_value=functions.bins_separation(sample_frequency, amplitude)
     # st.write(bin_max_frequency_value)
     sliders_data=functions.generate_sliders(bin_max_frequency_value)
+    st.markdown('# Modified Signal')
     mod_amplitude_axis_list,empty= functions.sound_modification(sliders_data,amplitude_axis_list)
-    modified_time_axis=np.linspace(0, duration, len(mod_amplitude_axis_list))
+    # modified_time_axis=np.linspace(0, duration, len(mod_amplitude_axis_list))
     phase=phase[:len(mod_amplitude_axis_list):1]
     ifft_file=functions.inverse_fourier(mod_amplitude_axis_list,phase) 
     uploaded_file=ipd.Audio(ifft_file,rate=samplerate/2)
     empty.write(uploaded_file)
     frequency= sample_frequency[:len(mod_amplitude_axis_list):1]
 
-
-
-
     functions.show_signal(time,data) #plots wav file data in time domain
-    functions.plot_spectrogram(data,samplerate)
+    functions.plot_spectrogram(data,ifft_file,samplerate,mod_amplitude_axis_list)

@@ -61,3 +61,24 @@ def remove_noise(original_Signal,sample_freq,peak_freq):
 # plt.legend()
 # plt.tight_layout()
 # plt.grid()
+
+
+
+
+
+
+def plot_spectrogram(data,ftt_file,samplerate):
+#     FRAME_SIZE = 2048
+#     HOP_SIZE = 512
+#     S_scale = librosa.stft(data, n_fft=FRAME_SIZE, hop_length=HOP_SIZE)
+#     Y_scale = np.abs(S_scale) ** 2
+#     Y_log_scale = librosa.power_to_db(Y_scale)
+#     SignalFigure, SignalAxis = plt.subplots(1, 1)
+#     librosa.display.specshow(Y_log_scale, 
+#                              sr=samplerate, 
+#                              hop_length=HOP_SIZE, 
+#                              x_axis="time")
+#     plt.colorbar(format="%+2.f")
+#     st.plotly_chart(SignalFigure,use_container_width=True)
+    
+    
