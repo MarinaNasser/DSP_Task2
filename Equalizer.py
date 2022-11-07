@@ -26,7 +26,7 @@ if 'uploaded' not in st.session_state:
 option = st.selectbox("Pick your sample!", options=["Take your pick", "Piano Music", "Biosignal", "Sine waves", "Vowels"])
 if not option=="Take your pick":
 
-    uploaded_file = st.file_uploader("uploader",key="uploaded_file",label_visibility="hidden")
+    uploaded_file = st.sidebar.file_uploader("uploader",key="uploaded_file",label_visibility="hidden")
 
     if uploaded_file is not None:
         st.session_state['uploaded']= True
@@ -51,15 +51,15 @@ if not option=="Take your pick":
             data, samplerate  = functions.handle_uploaded_audio_file(uploaded_file)
             duration = len(data)/samplerate
             time = np.arange(0,duration,1/samplerate)
-            st.markdown('# Original Signal')
-            st.audio(file_name)
+            st.sidebar.markdown('# Original Signal')
+            st.sidebar.audio(file_name)
             
     #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         fft_sig, amplitude,phase,sample_frequency=functions.Fourier_transform(data,samplerate)
         freq_axis_list, amplitude_axis_list,bin_max_frequency_value=functions.bins_separation(sample_frequency, amplitude)
         # st.write(bin_max_frequency_value)
         sliders_data=functions.generate_sliders(bin_max_frequency_value)
-        st.markdown('# Modified Signal')
+        st.sidebar.markdown('# Modified Signal')
         mod_amplitude_axis_list,empty= functions.sound_modification(sliders_data,amplitude_axis_list)
         # modified_time_axis=np.linspace(0, duration, len(mod_amplitude_axis_list))
         phase=phase[:len(mod_amplitude_axis_list):1]
