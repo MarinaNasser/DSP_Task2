@@ -12,7 +12,7 @@ import scipy
 import matplotlib.pyplot as plt
 
 st.set_page_config(layout="wide")
-
+st.title("Equalizer")
 
 #-----------------------------------------------------------------session state-------------------------------------------------------------------------------------------------------------------------------------
 if 'play_state' not in st.session_state:
@@ -53,13 +53,14 @@ if not option=="Take your pick":
             time = np.arange(0,duration,1/samplerate)
             st.sidebar.markdown('# Original Signal')
             st.sidebar.audio(file_name)
+            st.sidebar.markdown('# Modified Signal')
             
     #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         fft_sig, amplitude,phase,sample_frequency=functions.Fourier_transform(data,samplerate)
         freq_axis_list, amplitude_axis_list,bin_max_frequency_value=functions.bins_separation(sample_frequency, amplitude)
         # st.write(bin_max_frequency_value)
         sliders_data=functions.generate_sliders(bin_max_frequency_value)
-        st.sidebar.markdown('# Modified Signal')
+        
         mod_amplitude_axis_list,empty= functions.sound_modification(sliders_data,amplitude_axis_list)
         # modified_time_axis=np.linspace(0, duration, len(mod_amplitude_axis_list))
         phase=phase[:len(mod_amplitude_axis_list):1]
