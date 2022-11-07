@@ -10,6 +10,8 @@ import  streamlit_vertical_slider  as svs
 import librosa
 import librosa.display
 import itertools
+from plotly.subplots import make_subplots
+import plotly.graph_objects as go
 
 
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -82,7 +84,7 @@ def generate_sliders(bin_max_frequency_value):
                 slider1=svs.vertical_slider(key=i, default_value=1, step=1, min_value=min_value, max_value=max_value)
                 st.write(f" { frequency_val } HZ")
                 if slider1 == None:
-                    slider1 = 1
+                    slider1 = 0
                 sliders_data.append(slider1)
         return sliders_data
 
@@ -116,3 +118,14 @@ def plot_spectrogram(data,samplerate):
                              hop_length=HOP_SIZE, 
                              x_axis="time")
     plt.colorbar(format="%+2.f")
+
+# def plottingInfreqDomain(input, inFreq, output, outFreq):
+#     fig =  make_subplots(rows=2, cols=1,
+#                     shared_xaxes='all', shared_yaxes='all',
+#                     vertical_spacing=0.02)
+    
+#     fig.add_trace(go.Scatter(x = inFreq, y = input), 1,1 )
+#     fig.add_trace(go.Scatter(x = outFreq, y = output), 2,1 )
+
+#     fig.update_layout(height=600, width=600)
+#     st.plotly_chart(fig)
