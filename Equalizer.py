@@ -68,6 +68,6 @@ if not option=="Take your pick":
         uploaded_file=ipd.Audio(ifft_file,rate=samplerate/2)
         empty.write(uploaded_file)
         frequency= sample_frequency[:len(mod_amplitude_axis_list):1]
-
+#-----------------------------------------------------------------------------------plotting-------------------------------------------------------------------------------------------------------------------
         functions.show_signal(time,data) #plots wav file data in time domain
         functions.plot_spectrogram(data,ifft_file,samplerate,mod_amplitude_axis_list)
