@@ -45,7 +45,7 @@ def show_signal(x_axis,y_axis):
     plt.xlabel('Time [s]')
     plt.ylabel('Amplitude')
     st.plotly_chart(SignalFigure,use_container_width=True)
-#----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    #  ----------------------------------------------------------------------------------------------------------------------------------------------
 # get the fourier transform of the file
 def Fourier_transform(data, samplerate):
     time_step=1/samplerate
@@ -56,12 +56,12 @@ def Fourier_transform(data, samplerate):
     return fft_sig, amplitude,phase,sample_frequency
 
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-def bins_separation(frequency, amplitude):
+def bins_separation(frequency, amplitude, slidersNum):
     freq_axis_list = []
     amplitude_axis_list = []
-    bin_max_frequency_value = int(len(frequency)/10) # 50 60 70 80 90 100 120  len()=20  int(20/10)=2  
+    bin_max_frequency_value = int(len(frequency)/slidersNum) # 50 60 70 80 90 100 120  len()=20  int(20/10)=2  
     i = 0
-    while(i < 10):
+    while(i < slidersNum):
         freq_axis_list.append(
             frequency[i*bin_max_frequency_value : (i+1)*bin_max_frequency_value])
         amplitude_axis_list.append(
@@ -70,13 +70,13 @@ def bins_separation(frequency, amplitude):
     return freq_axis_list, amplitude_axis_list,bin_max_frequency_value
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # geberate sliders based on freq of uploaded file
-def generate_sliders(bin_max_frequency_value):
+def generate_sliders(bin_max_frequency_value , slidersNum):
         min_value=0
         max_value=0
         sliders_data = []
         boundary = int(50)
-        columns = st.columns(10)
-        for i in range(0, 10):
+        columns = st.columns(slidersNum)
+        for i in range(0, slidersNum):
             with columns[i]:
                 min_value = 1- boundary
                 max_value = 1 + boundary
@@ -93,7 +93,7 @@ def sound_modification(sliders_data , List_amplitude_axis):
     empty = st.empty()
     empty.empty()
     modified_bins=[]
-    for i in range(0,10):
+    for i in range(0,4):
         modified_bins.append( 10**(sliders_data[i]/20) * List_amplitude_axis[i])
     
     mod_amplitude_axis_list=list(itertools.chain.from_iterable(modified_bins))
