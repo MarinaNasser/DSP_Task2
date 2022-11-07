@@ -10,6 +10,8 @@ import  streamlit_vertical_slider  as svs
 import librosa
 import librosa.display
 import itertools
+from plotly.subplots import make_subplots
+import plotly.graph_objects as go
 
 
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
