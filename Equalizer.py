@@ -80,8 +80,20 @@ if not option=="Take your pick":
 
 #-------------------------------------------------------------------------------plotting-------------------------------------------------------------------------------------------------------------------
 
+
         functions.plot_signal(time,data,frequencies,amplitude) #time-domain representation, This shows us the loudness (amplitude) of sound wave changing with time.
-    
+        original_time_axis = np.linspace(0, duration, len(data))
+        original_df = pd.DataFrame({'time': original_time_axis[::500], 'amplitude': data[:: 500]}, columns=[
+            'time', 'amplitude'])
+        modified_time_axis = np.linspace(0, duration, len(mod_amplitude_axis_list))
+        modified_df=pd.DataFrame({'time': modified_time_axis[::500],'amplitude':mod_amplitude_axis_list[::500]}, columns=['time','amplitude'])
+        lines= functions.altair_plot(original_df,modified_df)
+        line_plot = st.altair_chart(lines)
+        start_btn = st.button('Start')
+
+        if start_btn:
+            functions.dynamic_plot(line_plot,original_df,modified_df)
+        
         functions.plot_spectrogram(data,fft_sig,samplerate,mod_amplitude_axis_list)
 
 

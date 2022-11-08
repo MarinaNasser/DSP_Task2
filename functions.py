@@ -13,6 +13,9 @@ import librosa.display
 import itertools
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
+import altair as alt
+import time
+
 
 
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -43,7 +46,7 @@ def plot_signal(time,data,freq,amp):
     SignalAxis[0].plot(time,data)
     SignalAxis[1].plot(freq,amp)
     SignalAxis[0].set_xlabel(xlabel='Time [sec]', size=25)
-    SignalAxis[0].set_ylabel(ylabel='Amplitude', size=25)
+    SignalAxis[0].set_ylabel(ylabel='Amp litude', size=25)
     SignalAxis[0].set_title("Time representation", fontsize=30)
     
     SignalAxis[1].set_xlabel(xlabel='Frequency [Hz]', size=25)
@@ -101,6 +104,48 @@ def generate_sliders(bin_max_frequency_value , slidersNum):
                 sliders_data.append(slider)
         return sliders_data
 
+def altair_plot(original_df,modified_df):
+    lines = alt.Chart(original_df).mark_line().encode(
+            x=alt.X('0:T', axis=alt.Axis(title='Time')),
+            y=alt.Y('1:Q', axis=alt.Axis(title='Amplitude'))
+        ).properties(
+            width=400,
+            height=300
+        )
+    modified_lines=alt.Chart(modified_df).mark_line().encode(
+        x=alt.X('0:T', axis=alt.Axis(title='Time')),
+        y=alt.Y('1:Q', axis=alt.Axis(title='Amplitude'))
+    ).properties(
+        width=400,
+        height=300
+        ).interactive()
+    return lines
+def plot_animation(original_df):
+            lines = alt.Chart(original_df).mark_line().encode(
+                x=alt.X('time', axis=alt.Axis(title='Time')),
+                y=alt.Y('amplitude', axis=alt.Axis(title='Amplitude')),
+            ).properties(
+                width=400,
+                height=300
+            ).interactive()
+           
+            return lines
+
+def dynamic_plot(line_plot,original_df,modified_df):
+    N = original_df.shape[0]  # number of elements in the dataframe
+    burst = 6       # number of elements (months) to add to the plot
+    size = burst    # size of the current dataset
+    for i in range(1, N):
+                step_df = original_df.iloc[0:size]
+                mod_step_df = modified_df.iloc[0:size]
+                lines = plot_animation(step_df)
+                mod_lines=plot_animation(mod_step_df)
+                concat=alt.hconcat(lines,mod_lines)
+                line_plot = line_plot.altair_chart(concat)
+                size = i + burst
+                if size >= N:
+                    size = N - 1
+                time.sleep(.00000000001)
 
 def signal_modification(sliders_data , List_amplitude_axis,slidersNum):
     empty = st.empty()
