@@ -54,7 +54,6 @@ if not option=="Take your pick":
         elif ext=='wav':
             # functions.Audio_player(uploaded_file)
             data, samplerate  = functions.handle_uploaded_audio_file(uploaded_file)
-            # st.write(data)
             duration = len(data)/samplerate
             time = np.arange(0,duration,1/samplerate)
             st.sidebar.markdown('# Original Signal')
