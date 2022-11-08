@@ -46,7 +46,7 @@ def plot_signal(time,data,freq,amp):
     SignalAxis[0].set_ylabel(ylabel='Amplitude', size=25)
     SignalAxis[0].set_title("Time representation", fontsize=30)
     
-    SignalAxis[1].set_xlabel(xlabel='Frequency [sec]', size=25)
+    SignalAxis[1].set_xlabel(xlabel='Frequency [Hz]', size=25)
     SignalAxis[1].set_ylabel(ylabel='Amplitude [dB]', size=25)
     SignalAxis[1].set_title("Frequency representation", fontsize=30)
     
@@ -63,7 +63,7 @@ def Fourier_transform(data, samplerate):
     # sample_frequency =sc.fft.rfftfreq(len(data),d=time_step)  #return the discrete fourier transform sample frequencies
     length_of_data=len(data)
     values      = np.arange(int(length_of_data/2))
-    timePeriod  = length_of_data/sampling_frequency
+    timePeriod  = length_of_data/samplerate
     frequencies = values/timePeriod
 
     return fft_sig, amplitude,phase,frequencies
