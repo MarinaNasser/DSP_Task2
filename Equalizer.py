@@ -7,7 +7,8 @@ import functions as functions
 from scipy.io.wavfile import read
 import os.path
 import IPython.display as ipd
-import scipy 
+from scipy.io import wavfile
+from scipy.io.wavfile import read, write
 
 import matplotlib.pyplot as plt
 
@@ -53,6 +54,7 @@ if not option=="Take your pick":
         elif ext=='wav':
             # functions.Audio_player(uploaded_file)
             data, samplerate  = functions.handle_uploaded_audio_file(uploaded_file)
+            # st.write(data)
             duration = len(data)/samplerate
             time = np.arange(0,duration,1/samplerate)
             st.sidebar.markdown('# Original Signal')

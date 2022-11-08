@@ -97,12 +97,17 @@ def signal_modification(sliders_data , List_amplitude_axis,slidersNum):
         modified_bins.append( 10**(sliders_data[i]/20) * List_amplitude_axis[i])
     
     mod_amplitude_axis_list=list(itertools.chain.from_iterable(modified_bins))
+ 
+    # st.write(mod_amplitude_axis_list)
+    
     return mod_amplitude_axis_list,empty
 
 
 def inverse_fourier(mod_amplitude_axis_list,phase):
     modified_signal=np.multiply(mod_amplitude_axis_list,np.exp(1j*phase))
+    # modified_signal=mod_amplitude_axis_list*np.cos(phase) +1j*mod_amplitude_axis_list*np.sin(phase) #list of complex no
     ifft_file=sc.ifft(modified_signal)
+    # ifft_file=np.fft.ifft(modified_signal)
     return ifft_file
 
 
