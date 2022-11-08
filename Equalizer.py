@@ -47,23 +47,25 @@ if not option=="Take your pick":
             data = df[list_of_columns[1]].to_numpy()
             max_freq=functions.getFMax(time,data)
             samplerate=2*max_freq
-            duration = len(time)
+            duration = len(time) 
         
 
     #------------------------------------------------------------------wav----------------------------------------------------------------------------------------------------------------------------------------------
         elif ext=='wav':
             # functions.Audio_player(uploaded_file)
             data, samplerate  = functions.handle_uploaded_audio_file(uploaded_file)
-            duration = len(data)/samplerate
-            time = np.arange(0,duration,1/samplerate)
+            sample_frequency=1/samplerate
+            fmax=sample_frequency/2
+            duration = len(data)/samplerate #DURATION is the length of the generated sample.
+            time = np.arange(0,duration, 1/samplerate)
             st.sidebar.markdown('# Original Signal')
             st.sidebar.audio(file_name)
             
     #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-        fft_sig, amplitude,phase,sample_frequency=functions.Fourier_transform(data,samplerate)
-        freq_axis_list, amplitude_axis_list,bin_max_frequency_value=functions.bins_separation(sample_frequency, amplitude ,slidersNum=10)
+        fft_sig, amplitude,phase,frequencies=functions.Fourier_transform(data,samplerate)
+        freq_axis_list, amplitude_axis_list,bin_max_frequency_value=functions.bins_separation(frequencies, amplitude ,slidersNum=10)
         sliders_data= functions.generate_sliders(bin_max_frequency_value,slidersNum=10)
         mod_amplitude_axis_list,empty= functions.signal_modification(sliders_data,amplitude_axis_list,slidersNum=10)
         phase=phase[:len(mod_amplitude_axis_list):1]
@@ -74,12 +76,12 @@ if not option=="Take your pick":
             # st.markdown('# Modified Signal')
             uploaded_file=ipd.Audio(ifft_file,rate=samplerate/2)
             audio=empty.write(uploaded_file)
-            frequency= sample_frequency[:len(mod_amplitude_axis_list):1]
+            frequency= frequencies[:len(mod_amplitude_axis_list):1]
 
 #-------------------------------------------------------------------------------plotting-------------------------------------------------------------------------------------------------------------------
 
-        functions.show_signal(time,data) #plots wav file data in time domain
-        # functions.show_signal(fft_sig,amplitude**2)
+        functions.plot_signal(time,data,"original") #time-domain representation, This shows us the loudness (amplitude) of sound wave changing with time.
+        functions.plot_signal(frequencies,amplitude,"fourier")
         functions.plot_spectrogram(data,fft_sig,samplerate,mod_amplitude_axis_list)
 
 

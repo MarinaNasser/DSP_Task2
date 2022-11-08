@@ -4,7 +4,8 @@ from pydub.playback import play
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy as sc
-from scipy.fftpack import fft
+# from scipy.fftpack import fft
+from scipy.fft import fft, fftfreq
 from scipy.signal import find_peaks
 import  streamlit_vertical_slider  as svs
 import librosa
@@ -32,28 +33,36 @@ def getFMax(xAxis,yAxis):
 #-----------------------------------------------------------------------Read the Audiofile-----------------------------------------------------------------------------------------------------------------------------
  
 def handle_uploaded_audio_file(uploaded_file):
-    a = AudioSegment.from_wav(uploaded_file)
-    samples = a.get_array_of_samples()
-    fp_arr = np.array(samples).T.astype(np.float32)
-    fp_arr /= np.iinfo(samples.typecode).max
-    
-    return fp_arr,  48000 #22050 
+    samples, sample_rate=librosa.load(uploaded_file, sr=None, mono=True, offset=0.0, duration=None)
+    return samples, sample_rate
+   
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-def show_signal(x_axis,y_axis):
+def plot_signal(x_axis,y_axis,var):
     SignalFigure, SignalAxis = plt.subplots(1, 1)
     SignalAxis.plot(x_axis,y_axis)
-    plt.xlabel('Time [s]')
+
+    if var=='original':
+        plt.xlabel('Time [s]')
+    else:
+        plt.xlabel('Frequency [Hz]')
+
     plt.ylabel('Amplitude')
     st.plotly_chart(SignalFigure,use_container_width=True)
 #  ----------------------------------------------------------------------------------------------------------------------------------------------
 # get the fourier transform of the file
 def Fourier_transform(data, samplerate):
-    time_step=1/samplerate
-    fft_sig = np.fft.fft(data)
+    sampling_frequency=1/samplerate
+    fft_sig = np.fft.fft(data)/len(data)  # Normalize data
+    fft_sig = fft_sig[range(int(len(data)/2))] # Exclude sampling frequency
     amplitude= np.abs(fft_sig)
-    phase =np.angle(fft_sig) #np.angle() return the angle of the complex argument
-    sample_frequency =sc.fft.rfftfreq(len(data),d=time_step)  #return the discrete fourier transform sample frequencies
-    return fft_sig, amplitude,phase,sample_frequency
+    phase =np.angle(fft_sig) # return the angle of the complex argument
+    # sample_frequency =sc.fft.rfftfreq(len(data),d=time_step)  #return the discrete fourier transform sample frequencies
+    length_of_data=len(data)
+    values      = np.arange(int(length_of_data/2))
+    timePeriod  = length_of_data/sampling_frequency
+    frequencies = values/timePeriod
+
+    return fft_sig, amplitude,phase,frequencies
 
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 def bins_separation(frequency, amplitude, slidersNum):
