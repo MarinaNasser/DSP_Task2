@@ -26,7 +26,7 @@ if 'uploaded' not in st.session_state:
      st.session_state['uploaded']= False
 
 #------------------------------------------------------------------Upload_file----------------------------------------------------------------------------------------------------------------------------------------------
-option = st.selectbox("Pick your sample!", options=["Take your pick", "Piano Music", "Biosignal", "Sine waves", "Vowels"])
+option = st.selectbox("Pick your sample!", options=["Take your pick", "Music", "Biosignal", "Sine waves", "Vowels"])
 if not option=="Take your pick":
 
     uploaded_file = st.sidebar.file_uploader("uploader",key="uploaded_file",label_visibility="hidden")
@@ -57,7 +57,6 @@ if not option=="Take your pick":
             time = np.arange(0,duration,1/samplerate)
             st.sidebar.markdown('# Original Signal')
             st.sidebar.audio(file_name)
-            st.sidebar.markdown('# Modified Signal')
             
     #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -65,18 +64,22 @@ if not option=="Take your pick":
         fft_sig, amplitude,phase,sample_frequency=functions.Fourier_transform(data,samplerate)
         freq_axis_list, amplitude_axis_list,bin_max_frequency_value=functions.bins_separation(sample_frequency, amplitude ,slidersNum=10)
         sliders_data= functions.generate_sliders(bin_max_frequency_value,slidersNum=10)
-        mod_amplitude_axis_list,empty= functions.sound_modification(sliders_data,amplitude_axis_list)
-        modified_time_axis=np.linspace(0, duration, len(mod_amplitude_axis_list))
+        mod_amplitude_axis_list,empty= functions.signal_modification(sliders_data,amplitude_axis_list,slidersNum=10)
         phase=phase[:len(mod_amplitude_axis_list):1]
         ifft_file=functions.inverse_fourier(mod_amplitude_axis_list,phase) 
-        # uploaded_file=ipd.Audio(ifft_file,rate=samplerate/2)
-        frequency= sample_frequency[:len(mod_amplitude_axis_list):1]
+      
+        if option=='Music' or option=='Vowels':
+            # modified_time_axis=np.linspace(0, duration, len(mod_amplitude_axis_list))
+            # st.markdown('# Modified Signal')
+            uploaded_file=ipd.Audio(ifft_file,rate=samplerate/2)
+            audio=empty.write(uploaded_file)
+            frequency= sample_frequency[:len(mod_amplitude_axis_list):1]
 
-#-----------------------------------------------------------------------------------plotting-------------------------------------------------------------------------------------------------------------------
-
+#-------------------------------------------------------------------------------plotting-------------------------------------------------------------------------------------------------------------------
 
         functions.show_signal(time,data) #plots wav file data in time domain
-        functions.plot_spectrogram(data,ifft_file,samplerate,mod_amplitude_axis_list)
+        # functions.show_signal(fft_sig,amplitude**2)
+        functions.plot_spectrogram(data,fft_sig,samplerate,mod_amplitude_axis_list)
 
 
 # elif option == "Biosignal" :     #50_200  ()
@@ -100,11 +103,11 @@ if not option=="Take your pick":
 #     functions.show_signal(time,data) #plots wav file data in time domain       
 #     functions.plot_spectrogram(data,ifft_file,samplerate,mod_amplitude_axis_list) 
 
-# elif option == "Piano Music" :
+
 
 # elif option == "Sine waves" :
 
-# elif option == "Vowels" :
+
 
 
 

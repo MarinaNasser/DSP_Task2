@@ -45,7 +45,7 @@ def show_signal(x_axis,y_axis):
     plt.xlabel('Time [s]')
     plt.ylabel('Amplitude')
     st.plotly_chart(SignalFigure,use_container_width=True)
-    #  ----------------------------------------------------------------------------------------------------------------------------------------------
+#  ----------------------------------------------------------------------------------------------------------------------------------------------
 # get the fourier transform of the file
 def Fourier_transform(data, samplerate):
     time_step=1/samplerate
@@ -89,11 +89,11 @@ def generate_sliders(bin_max_frequency_value , slidersNum):
         return sliders_data
 
 
-def sound_modification(sliders_data , List_amplitude_axis):
+def signal_modification(sliders_data , List_amplitude_axis,slidersNum):
     empty = st.empty()
     empty.empty()
     modified_bins=[]
-    for i in range(0,4):
+    for i in range(0,slidersNum):  
         modified_bins.append( 10**(sliders_data[i]/20) * List_amplitude_axis[i])
     
     mod_amplitude_axis_list=list(itertools.chain.from_iterable(modified_bins))
