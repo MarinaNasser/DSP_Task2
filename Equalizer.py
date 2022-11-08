@@ -9,22 +9,18 @@ import os.path
 import IPython.display as ipd
 from scipy.io import wavfile
 from scipy.io.wavfile import read, write
-
 import matplotlib.pyplot as plt
 
-
 st.set_page_config(page_title= "Equalizer", layout="wide" ,page_icon=":musical_keyboard:")
+with open('Equalizer.css') as fileStyle:
+    st.markdown(f'<style>{fileStyle.read()}</style>', unsafe_allow_html=True)
+
+
 
 with open("style.css")as source_des:
     st.markdown(f"<style>{source_des.read()} </style>", unsafe_allow_html=True)
 
-#-----------------------------------------------------------------session state-------------------------------------------------------------------------------------------------------------------------------------
-if 'play_state' not in st.session_state:
-     st.session_state['play_state']= False
 
-
-if 'uploaded' not in st.session_state:
-     st.session_state['uploaded']= False
 
 #------------------------------------------------------------------Upload_file----------------------------------------------------------------------------------------------------------------------------------------------
 option = st.selectbox("Pick your sample!", options=["Take your pick", "Music", "Biosignal", "Sine waves", "Vowels"])
@@ -32,13 +28,14 @@ if not option=="Take your pick":
 
     uploaded_file = st.sidebar.file_uploader("uploader",key="uploaded_file",label_visibility="hidden")
 
+    if option == "Biosignal":
+        data,time,samplerate=functions.arrhythima()
+
+
     if uploaded_file is not None:
-        st.session_state['uploaded']= True
         file_name=uploaded_file.name
         ext = os.path.splitext(file_name)[1][1:]
-        # st.write(ext)
-
-        
+  
     #------------------------------------------------------------------csv----------------------------------------------------------------------------------------------------------------------------------------------
         if ext=='csv':
             df = pd.read_csv(uploaded_file)
@@ -62,7 +59,7 @@ if not option=="Take your pick":
             st.sidebar.audio(file_name)
             
     #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
+        
 
         fft_sig, amplitude,phase,frequencies=functions.Fourier_transform(data,samplerate)
         freq_axis_list, amplitude_axis_list,bin_max_frequency_value=functions.bins_separation(frequencies, amplitude ,slidersNum=10)
@@ -70,7 +67,7 @@ if not option=="Take your pick":
         mod_amplitude_axis_list,empty= functions.signal_modification(sliders_data,amplitude_axis_list,slidersNum=10)
         phase=phase[:len(mod_amplitude_axis_list):1]
         ifft_file=functions.inverse_fourier(mod_amplitude_axis_list,phase) 
-      
+
         if option=='Music' or option=='Vowels':
             # modified_time_axis=np.linspace(0, duration, len(mod_amplitude_axis_list))
             # st.markdown('# Modified Signal')
@@ -78,10 +75,12 @@ if not option=="Take your pick":
             audio=empty.write(uploaded_file)
             frequency= frequencies[:len(mod_amplitude_axis_list):1]
 
+
+        
 #-------------------------------------------------------------------------------plotting-------------------------------------------------------------------------------------------------------------------
 
         functions.plot_signal(time,data,frequencies,amplitude) #time-domain representation, This shows us the loudness (amplitude) of sound wave changing with time.
-    
+
         functions.plot_spectrogram(data,fft_sig,samplerate,mod_amplitude_axis_list)
 
 
