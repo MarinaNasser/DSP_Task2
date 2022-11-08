@@ -130,6 +130,7 @@ def plot_animation(original_df):
             ).interactive()
            
             return lines
+# ay 7aga
 
 def dynamic_plot(line_plot,original_df,modified_df):
     N = original_df.shape[0]  # number of elements in the dataframe
