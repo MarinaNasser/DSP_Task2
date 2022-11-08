@@ -37,17 +37,21 @@ def handle_uploaded_audio_file(uploaded_file):
     return samples, sample_rate
    
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-def plot_signal(x_axis,y_axis,var):
-    SignalFigure, SignalAxis = plt.subplots(1, 1)
-    SignalAxis.plot(x_axis,y_axis)
+def plot_signal(time,data,freq,amp):
 
-    if var=='original':
-        plt.xlabel('Time [s]')
-    else:
-        plt.xlabel('Frequency [Hz]')
+    SignalFigure, SignalAxis = plt.subplots(1, 2,figsize=(30, 10))
+    SignalAxis[0].plot(time,data)
+    SignalAxis[1].plot(freq,amp)
+    SignalAxis[0].set_xlabel(xlabel='Time [sec]', size=25)
+    SignalAxis[0].set_ylabel(ylabel='Amplitude', size=25)
+    SignalAxis[0].set_title("Time representation", fontsize=30)
+    
+    SignalAxis[1].set_xlabel(xlabel='Frequency [sec]', size=25)
+    SignalAxis[1].set_ylabel(ylabel='Amplitude [dB]', size=25)
+    SignalAxis[1].set_title("Frequency representation", fontsize=30)
+    
+    st.pyplot(SignalFigure)
 
-    plt.ylabel('Amplitude')
-    st.plotly_chart(SignalFigure,use_container_width=True)
 #  ----------------------------------------------------------------------------------------------------------------------------------------------
 # get the fourier transform of the file
 def Fourier_transform(data, samplerate):
@@ -130,7 +134,7 @@ def plot_spectrogram(data,ifft_file,samplerate,mod_amplitude_axis_list):
     st.sidebar.markdown('## Spectrogram')
     spec1 = st.sidebar.checkbox("Show", key=2)
     
-    fig2, ax = plt.subplots(1, 2, figsize=(30, 15))
+    fig2, ax = plt.subplots(1, 2, figsize=(30, 10))
    
     ax[0].specgram(data, Fs=samplerate)
     ax[0].set_xlabel(xlabel='Time [sec]', size=25)

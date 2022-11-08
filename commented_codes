@@ -90,3 +90,16 @@ def handled_audio
     # fp_arr /= np.iinfo(samples.typecode).max
     
     # return fp_arr, 44100 #48000 #22050 
+
+
+ # SignalFigure, SignalAxis = plt.subplots(1, 1)
+    # SignalAxis.plot(x_axis,y_axis)
+
+    # if var=='original':
+    #     plt.xlabel('Time [s]')
+    # else:
+    #     plt.xlabel('Frequency [Hz]')
+
+    # plt.ylabel('Amplitude')
+    
+    # st.plotly_chart(SignalFigure,use_container_width=True)

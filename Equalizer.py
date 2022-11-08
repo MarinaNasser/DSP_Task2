@@ -80,8 +80,8 @@ if not option=="Take your pick":
 
 #-------------------------------------------------------------------------------plotting-------------------------------------------------------------------------------------------------------------------
 
-        functions.plot_signal(time,data,"original") #time-domain representation, This shows us the loudness (amplitude) of sound wave changing with time.
-        functions.plot_signal(frequencies,amplitude,"fourier")
+        functions.plot_signal(time,data,frequencies,amplitude) #time-domain representation, This shows us the loudness (amplitude) of sound wave changing with time.
+    
         functions.plot_spectrogram(data,fft_sig,samplerate,mod_amplitude_axis_list)
 
 
@@ -122,7 +122,7 @@ if not option=="Take your pick":
 
 
 
-else :
-    functions.generate_sliders(bin_max_frequency_value=10,slidersNum=10)
+# else :
+#     functions.generate_sliders(bin_max_frequency_value=10,slidersNum=10)
 
          
