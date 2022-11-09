@@ -61,39 +61,52 @@ if not option=="Take your pick":
     #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         
 
-        fft_sig, amplitude,phase,frequencies=functions.Fourier_transform(data,samplerate)
-        freq_axis_list, amplitude_axis_list,bin_max_frequency_value=functions.bins_separation(frequencies, amplitude ,slidersNum=10)
-        sliders_data= functions.generate_sliders(bin_max_frequency_value,slidersNum=10)
-        mod_amplitude_axis_list,empty= functions.signal_modification(sliders_data,amplitude_axis_list,slidersNum=10)
-        phase=phase[:len(mod_amplitude_axis_list):1]
-        ifft_file=functions.inverse_fourier(mod_amplitude_axis_list,phase) 
+        # fft_sig, amplitude,phase,frequencies=functions.Fourier_transform(data,samplerate)
+        # freq_axis_list, amplitude_axis_list,bin_max_frequency_value=functions.bins_separation(frequencies, amplitude ,slidersNum=10)
+        # sliders_data= functions.generate_sliders(bin_max_frequency_value,slidersNum=10)
+        # mod_amplitude_axis_list,empty= functions.signal_modification(sliders_data,amplitude_axis_list,slidersNum=10)
+        # phase=phase[:len(mod_amplitude_axis_list):1]
+        # ifft_file=functions.inverse_fourier(mod_amplitude_axis_list,phase) 
 
-        if option=='Music' or option=='Vowels':
-            # modified_time_axis=np.linspace(0, duration, len(mod_amplitude_axis_list))
-            # st.markdown('# Modified Signal')
-            uploaded_file=ipd.Audio(ifft_file,rate=samplerate/2)
-            audio=empty.write(uploaded_file)
-            frequency= frequencies[:len(mod_amplitude_axis_list):1]
+        # if option=='Music' or option=='Vowels':
+        #     # modified_time_axis=np.linspace(0, duration, len(mod_amplitude_axis_list))
+        #     # st.markdown('# Modified Signal')
+        #     uploaded_file=ipd.Audio(ifft_file,rate=samplerate/2)
+        #     audio=empty.write(uploaded_file)
+        #     frequency= frequencies[:len(mod_amplitude_axis_list):1]
+            original_time_axis = np.linspace(0, duration, len(data))
+
+            fft_sig, amplitude, phase, frequency = functions.Fourier_transform(
+                data, samplerate)
+            sliders_data = functions.music_generate_sliders()
+            modified_amplitude, empty = functions.music_modification(
+                frequency, amplitude, sliders_data)
+            modified_time_axis = np.linspace(
+                0, duration, len(modified_amplitude))
+            ifft_file = functions.inverse_fourier(modified_amplitude, phase)
+            song = ipd.Audio(ifft_file, rate=samplerate/2)
+            empty.write(song)
+            ax = plt.figure(figsize=(10, 8))
 
 
         
 #-------------------------------------------------------------------------------plotting-------------------------------------------------------------------------------------------------------------------
 
 
-        functions.plot_signal(time,data,frequencies,amplitude) #time-domain representation, This shows us the loudness (amplitude) of sound wave changing with time.
-        original_time_axis = np.linspace(0, duration, len(data))
-        original_df = pd.DataFrame({'time': original_time_axis[::500], 'amplitude': data[:: 500]}, columns=[
-            'time', 'amplitude'])
-        modified_time_axis = np.linspace(0, duration, len(mod_amplitude_axis_list))
-        modified_df=pd.DataFrame({'time': modified_time_axis[::500],'amplitude':mod_amplitude_axis_list[::500]}, columns=['time','amplitude'])
-        lines= functions.altair_plot(original_df,modified_df)
-        line_plot = st.altair_chart(lines)
-        start_btn = st.button('Start')
+        # functions.plot_signal(time,data,frequencies,amplitude) #time-domain representation, This shows us the loudness (amplitude) of sound wave changing with time.
+        # original_time_axis = np.linspace(0, duration, len(data))
+        # original_df = pd.DataFrame({'time': original_time_axis[::500], 'amplitude': data[:: 500]}, columns=[
+        #     'time', 'amplitude'])
+        # modified_time_axis = np.linspace(0, duration, len(mod_amplitude_axis_list))
+        # modified_df=pd.DataFrame({'time': modified_time_axis[::500],'amplitude':mod_amplitude_axis_list[::500]}, columns=['time','amplitude'])
+        # lines= functions.altair_plot(original_df,modified_df)
+        # line_plot = st.altair_chart(lines)
+        # start_btn = st.button('Start')
 
-        if start_btn:
-            functions.dynamic_plot(line_plot,original_df,modified_df)
+        # if start_btn:
+        #     functions.dynamic_plot(line_plot,original_df,modified_df)
         
-        functions.plot_spectrogram(data,fft_sig,samplerate,mod_amplitude_axis_list)
+        # functions.plot_spectrogram(data,fft_sig,samplerate,mod_amplitude_axis_list)
 
 
 # elif option == "Biosignal" :     #50_200  ()

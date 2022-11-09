@@ -15,6 +15,8 @@ from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 import altair as alt
 import time
+from scipy.misc import electrocardiogram
+
 
 
 
@@ -104,6 +106,23 @@ def generate_sliders(bin_max_frequency_value , slidersNum):
                 sliders_data.append(slider)
         return sliders_data
 
+def music_generate_sliders():
+        min_value=0
+        max_value=0
+        sliders_data = []
+        boundary = int(50)
+        columns = st.columns(3)
+        for i in range(0, 3):
+            with columns[i]:
+                min_value = 1- boundary
+                max_value = 1 + boundary
+                slider=svs.vertical_slider(key=i, default_value=1, step=1, min_value=min_value, max_value=max_value)
+                if slider == None:
+                    slider = 1
+                sliders_data.append(slider)
+        return sliders_data
+
+
 def altair_plot(original_df,modified_df):
     lines = alt.Chart(original_df).mark_line().encode(
             x=alt.X('0:T', axis=alt.Axis(title='Time')),
@@ -130,7 +149,6 @@ def plot_animation(original_df):
             ).interactive()
            
             return lines
-# ay 7aga
 
 def dynamic_plot(line_plot,original_df,modified_df):
     N = original_df.shape[0]  # number of elements in the dataframe
@@ -161,6 +179,27 @@ def signal_modification(sliders_data , List_amplitude_axis,slidersNum):
     
     return mod_amplitude_axis_list,empty
 
+def music_modification(frequency, amplitude, sliders_data):
+    empty = st.empty()
+    empty.empty()
+    index_drums = np.where((frequency >= 10) & (frequency < 800))
+
+    for i in index_drums:
+        amplitude[i] = amplitude[i]*sliders_data[0]
+
+    index_guitar = np.where((frequency >= 900) & (frequency < 3000))
+    for i in index_guitar:
+        amplitude[i] = amplitude[i]*sliders_data[1]
+    index_flute = np.where((frequency >= 5000) & (frequency < 25000))
+    for i in index_flute:
+        amplitude[i] = amplitude[i]*sliders_data[2]
+
+    # index_unwanted_amplitudes = np.where((amplitude < 200))
+    # st.write(index_unwanted_amplitudes)
+    # for i in index_unwanted_amplitudes:
+    #     amplitude[i] = 0
+    # st.write(amplitude)
+    return amplitude, empty
 
 def inverse_fourier(mod_amplitude_axis_list,phase):
     modified_signal=np.multiply(mod_amplitude_axis_list,np.exp(1j*phase))
