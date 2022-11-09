@@ -17,49 +17,86 @@ with open('Equalizer.css') as fileStyle:
 
 
 
-with open("style.css")as source_des:
-    st.markdown(f"<style>{source_des.read()} </style>", unsafe_allow_html=True)
-
-
-
 #------------------------------------------------------------------Upload_file----------------------------------------------------------------------------------------------------------------------------------------------
+
 option = st.selectbox("Pick your sample!", options=["Take your pick", "Music", "Biosignal", "Sine waves", "Vowels"])
-if not option=="Take your pick":
 
-    uploaded_file = st.sidebar.file_uploader("uploader",key="uploaded_file",label_visibility="hidden")
-
-    if option == "Biosignal":
-        data,time,samplerate=functions.arrhythima()
+uploaded_file = st.sidebar.file_uploader("uploader",key="uploaded_file",label_visibility="hidden")
 
 
-    if uploaded_file is not None:
-        file_name=uploaded_file.name
-        ext = os.path.splitext(file_name)[1][1:]
+if uploaded_file is None :
+       functions.generate_sliders(bin_max_frequency_value=10 , slidersNum=10 )
+
+
+if uploaded_file is not None:
+    file_name=uploaded_file.name
+    ext = os.path.splitext(file_name)[1][1:]
   
     #------------------------------------------------------------------csv----------------------------------------------------------------------------------------------------------------------------------------------
-        if ext=='csv':
-            df = pd.read_csv(uploaded_file)
-            list_of_columns=df.columns
-            time = df[list_of_columns[0]].to_numpy()
-            data = df[list_of_columns[1]].to_numpy()
-            max_freq=functions.getFMax(time,data)
-            samplerate=2*max_freq
-            duration = len(time) 
+    if ext=='csv':
+        df = pd.read_csv(uploaded_file)
+        list_of_columns=df.columns
+        time = df[list_of_columns[0]].to_numpy()
+        data = df[list_of_columns[1]].to_numpy()
+        max_freq=functions.getFMax(time,data)
+        samplerate=2*max_freq
+        duration = len(time) 
         
 
     #------------------------------------------------------------------wav----------------------------------------------------------------------------------------------------------------------------------------------
-        elif ext=='wav':
-            # functions.Audio_player(uploaded_file)
-            data, samplerate  = functions.handle_uploaded_audio_file(uploaded_file)
-            sample_frequency=1/samplerate
-            fmax=sample_frequency/2
-            duration = len(data)/samplerate #DURATION is the length of the generated sample.
-            time = np.arange(0,duration, 1/samplerate)
-            st.sidebar.markdown('# Original Signal')
-            st.sidebar.audio(file_name)
+    elif ext=='wav':
+         # functions.Audio_player(uploaded_file)
+        data, samplerate  = functions.handle_uploaded_audio_file(uploaded_file)
+        sample_frequency=1/samplerate
+        fmax=sample_frequency/2
+        duration = len(data)/samplerate #DURATION is the length of the generated sample.
+        time = np.arange(0,duration, 1/samplerate)
+        st.sidebar.markdown('# Original Signal')
+        st.sidebar.audio(file_name)
+
+
+#----------------------------------------------------------------------------------------------------------------------------------------------------biosignal-------------------------------------------------
+
+
+    if option == "Biosignal":
+        data,time,samplerate=functions.arrhythima()
+        fft_sig, amplitude, phase, frequency = functions.Fourier_transform(
+                data, samplerate)
+        bin_max_frequency_value = functions.bins_separation(frequency, amplitude, slidersNum=4)        
+        sliders_data = functions.generate_sliders(bin_max_frequency_value,slidersNum=4)
+        modified_amplitude, empty = functions.signal_modification(
+             sliders_data, amplitude, slidersNum=4)
+        ifft_file = functions.inverse_fourier(modified_amplitude, phase)
+        functions.plot_signal(time,ifft_file,frequency,modified_amplitude)
+
             
-    #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        
+#----------------------------------------------------------------------------------------------------------------------------------------------------music-------------------------------------------------
+
+    elif option == "Music" :
+
+        sliders_data = functions.music_generate_sliders()
+        fft_sig, amplitude, phase, frequency = functions.Fourier_transform(
+                data, samplerate)
+        modified_amplitude, empty = functions.music_modification(
+        frequency, amplitude, sliders_data)
+        modified_time_axis = np.linspace(
+                0, duration, len(modified_amplitude))
+        ifft_file = functions.inverse_fourier(modified_amplitude, phase)
+        song = ipd.Audio(ifft_file, rate=samplerate/2)
+        empty.write(song)
+        ax = plt.figure(figsize=(10, 8))
+
+#------------------------------------------------------------------------------------------------------------------------------------------------------sine wave-----------------------------------------------
+    # elif option == "Sine waves" :
+
+#-----------------------------------------------------------------------------------------------------------------------------------------------------vowels------------------------------------------------  
+    # elif option == "Vowels" : 
+
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------  
+   
+
+
+
 
         # fft_sig, amplitude,phase,frequencies=functions.Fourier_transform(data,samplerate)
         # freq_axis_list, amplitude_axis_list,bin_max_frequency_value=functions.bins_separation(frequencies, amplitude ,slidersNum=10)
@@ -74,19 +111,19 @@ if not option=="Take your pick":
         #     uploaded_file=ipd.Audio(ifft_file,rate=samplerate/2)
         #     audio=empty.write(uploaded_file)
         #     frequency= frequencies[:len(mod_amplitude_axis_list):1]
-            original_time_axis = np.linspace(0, duration, len(data))
+            # original_time_axis = np.linspace(0, duration, len(data))
 
-            fft_sig, amplitude, phase, frequency = functions.Fourier_transform(
-                data, samplerate)
-            sliders_data = functions.music_generate_sliders()
-            modified_amplitude, empty = functions.music_modification(
-                frequency, amplitude, sliders_data)
-            modified_time_axis = np.linspace(
-                0, duration, len(modified_amplitude))
-            ifft_file = functions.inverse_fourier(modified_amplitude, phase)
-            song = ipd.Audio(ifft_file, rate=samplerate/2)
-            empty.write(song)
-            ax = plt.figure(figsize=(10, 8))
+            # fft_sig, amplitude, phase, frequency = functions.Fourier_transform(
+            #     data, samplerate)
+            # sliders_data = functions.music_generate_sliders()
+            # modified_amplitude, empty = functions.music_modification(
+            #     frequency, amplitude, sliders_data)
+            # modified_time_axis = np.linspace(
+            #     0, duration, len(modified_amplitude))
+            # ifft_file = functions.inverse_fourier(modified_amplitude, phase)
+            # song = ipd.Audio(ifft_file, rate=samplerate/2)
+            # empty.write(song)
+            # ax = plt.figure(figsize=(10, 8))
 
 
         
@@ -109,44 +146,6 @@ if not option=="Take your pick":
         # functions.plot_spectrogram(data,fft_sig,samplerate,mod_amplitude_axis_list)
 
 
-# elif option == "Biosignal" :     #50_200  ()
-#     fft_sig, amplitude,phase,sample_frequency=functions.Fourier_transform(data,samplerate)
 
-#     freq_axis_list, amplitude_axis_list,bin_max_frequency_value=functions.bins_separation(sample_frequency, amplitude ,slidersNum=4)
-
-#     sliders_data= functions.generate_sliders(bin_max_frequency_value,slidersNum=4)  
-
-#     mod_amplitude_axis_list,empty= functions.sound_modification(sliders_data,amplitude_axis_list)
-
-#     modified_time_axis=np.linspace(0, duration, len(mod_amplitude_axis_list)) 
-
-#     phase=phase[:len(mod_amplitude_axis_list):1]
-
-#     ifft_file=functions.inverse_fourier(mod_amplitude_axis_list,phase) 
-
-#     frequency= sample_frequency[:len(mod_amplitude_axis_list):1]
-
-#     functions.show_signal(modified_time_axis,ifft_file)
-#     functions.show_signal(time,data) #plots wav file data in time domain       
-#     functions.plot_spectrogram(data,ifft_file,samplerate,mod_amplitude_axis_list) 
-
-
-
-# elif option == "Sine waves" :
-
-
-
-
-
-
-
-
-
-
-
-
-
-# else :
-#     functions.generate_sliders(bin_max_frequency_value=10,slidersNum=10)
 
          
