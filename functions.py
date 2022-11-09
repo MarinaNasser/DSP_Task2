@@ -99,6 +99,7 @@ def generate_sliders(bin_max_frequency_value , slidersNum):
                 min_value = 1- boundary
                 max_value = 1 + boundary
                 frequency_val = (i+1)*bin_max_frequency_value
+                # st.write(f" { frequency_val } HZ")
                 slider=svs.vertical_slider(key=i, default_value=1, step=1, min_value=min_value, max_value=max_value)
                 st.write(f" { frequency_val } HZ")
                 if slider == None:
@@ -106,21 +107,21 @@ def generate_sliders(bin_max_frequency_value , slidersNum):
                 sliders_data.append(slider)
         return sliders_data
 
-def music_generate_sliders():
-        min_value=0
-        max_value=0
-        sliders_data = []
-        boundary = int(50)
-        columns = st.columns(3)
-        for i in range(0, 3):
-            with columns[i]:
-                min_value = 1- boundary
-                max_value = 1 + boundary
-                slider=svs.vertical_slider(key=i, default_value=1, step=1, min_value=min_value, max_value=max_value)
-                if slider == None:
-                    slider = 1
-                sliders_data.append(slider)
-        return sliders_data
+# def music_generate_sliders():
+#         min_value=0
+#         max_value=0
+#         sliders_data = []
+#         boundary = int(50)
+#         columns = st.columns(3)
+#         for i in range(0, 3):
+#             with columns[i]:
+#                 min_value = 1- boundary
+#                 max_value = 1 + boundary
+#                 slider=svs.vertical_slider(key=i, default_value=1, step=1, min_value=min_value, max_value=max_value)
+#                 if slider == None:
+#                     slider = 1
+#                 sliders_data.append(slider)
+#         return sliders_data
 
 
 def altair_plot(original_df,modified_df):
@@ -174,10 +175,9 @@ def signal_modification(sliders_data , List_amplitude_axis,slidersNum):
         modified_bins.append( 10**(sliders_data[i]/20) * List_amplitude_axis[i])
     
     mod_amplitude_axis_list=list(itertools.chain.from_iterable(modified_bins))
- 
-    # st.write(mod_amplitude_axis_list)
     
     return mod_amplitude_axis_list,empty
+
 
 def music_modification(frequency, amplitude, sliders_data):
     empty = st.empty()
@@ -215,9 +215,6 @@ def plot_spectrogram(data,ifft_file,samplerate,mod_amplitude_axis_list):
     # yticks for spectrograms
     helper = [0, 2500, 5000, 7500, 10000, 12500, 15000, 17500, 20000]
     spec_yticks = [6.28 * i for i in helper]
-
-    st.sidebar.markdown('## Spectrogram')
-    spec1 = st.sidebar.checkbox("Show", key=2)
     
     fig2, ax = plt.subplots(1, 2, figsize=(30, 10))
    
@@ -236,8 +233,8 @@ def plot_spectrogram(data,ifft_file,samplerate,mod_amplitude_axis_list):
     ax[1].set_yticklabels(spec_yticks)
     ax[1].set_title("Modified signal", fontsize=30)
     ax[1].tick_params(axis='both', which='both', labelsize=18)
-    if spec1:
-        st.pyplot(fig2)
+    
+    st.pyplot(fig2)
 
    
 def arrhythima():
