@@ -13,18 +13,19 @@ import matplotlib.pyplot as plt
 
 st.set_page_config(page_title= "Equalizer", layout="wide" ,page_icon=":musical_keyboard:")
 
-
+with open("Equalizer.css")as source_des:
+    st.markdown(f"<style>{source_des.read()} </style>", unsafe_allow_html=True)
 
 #------------------------------------------------------------------Upload_file----------------------------------------------------------------------------------------------------------------------------------------------
 
-option = st.selectbox("Pick your sample!", options=["Take your pick", "Music", "Biosignal", "Sine waves", "Vowels"])
+option = st.sidebar.selectbox("Pick your sample!", options=[ "Music", "Biosignal", "Sine waves", "Vowels"])
 
 if not option=="Take your pick":
 
     uploaded_file = st.sidebar.file_uploader("uploader",key="uploaded_file",label_visibility="hidden")
 
     data=[]
-
+    
     if uploaded_file is not None:
         file_name=uploaded_file.name
         ext = os.path.splitext(file_name)[1][1:]
@@ -52,7 +53,9 @@ if not option=="Take your pick":
         
     elif option == "Biosignal":
         data,time,samplerate=functions.arrhythima()
-
+    else :
+        st.markdown("<h1 style='text-align: center; color:darkcyan;'>Signal Equalizer</h1>", unsafe_allow_html=True)
+        functions.generate_sliders(bin_max_frequency_value=10,slidersNum=10)
 #----------------------------------------------------------------------Fourier-------------------------------------------------------------------------------------------------------------------------------------------------------
     if not data==[]:
         fft_sig, amplitude,phase,frequencies=functions.Fourier_transform(data,samplerate)
@@ -66,9 +69,9 @@ if not option=="Take your pick":
             mod_amplitude_axis_list,empty= functions.signal_modification(sliders_data,amplitude_axis_list,slidersNum=10)
             phase=phase[:len(mod_amplitude_axis_list):1]
             ifft_file=functions.inverse_fourier(mod_amplitude_axis_list,phase) 
-            st.markdown('# Modified Signal')
+            st.sidebar.markdown('# Modified Signal')
             uploaded_file=ipd.Audio(ifft_file,rate=samplerate/2)
-            audio=empty.write(uploaded_file)
+            audio=st.sidebar.write(uploaded_file)
             frequency= frequencies[:len(mod_amplitude_axis_list):1]
             modified_time_axis=np.linspace(0, duration, len(mod_amplitude_axis_list))
             
@@ -80,28 +83,30 @@ if not option=="Take your pick":
             sliders_data= functions.generate_sliders(bin_max_frequency_value,slidersNum=3)
             mod_amplitude_axis_list, empty = functions.music_modification(frequencies, amplitude, sliders_data)
             phase=phase[:len(mod_amplitude_axis_list):1]
+            ifft_file = functions.inverse_fourier(mod_amplitude_axis_list,phase)
             modified_time_axis = np.linspace(0, duration, len(mod_amplitude_axis_list))
-            ifft_file = functions.inverse_fourier(mod_amplitude_axis_list, phase)
-            st.markdown('# Modified Signal')
+            st.sidebar.markdown('# Modified Signal')
             song = ipd.Audio(ifft_file, rate=samplerate/2)
-            empty.write(song)
+            st.sidebar.write(song)
             ax = plt.figure(figsize=(10, 8))
 
     #----------------------------------------------------------------------Biosignal------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         elif option=='Biosignal':
-            freq_axis_list, amplitude_axis_list,bin_max_frequency_value=functions.bins_separation(frequencies, amplitude ,slidersNum=3)
-            sliders_data= functions.generate_sliders(bin_max_frequency_value,slidersNum=3)
-            mod_amplitude_axis_list,empty= functions.signal_modification(sliders_data,amplitude_axis_list,slidersNum=3)
+            freq_axis_list, amplitude_axis_list,bin_max_frequency_value=functions.bins_separation(frequencies, amplitude ,slidersNum=4)
+            sliders_data= functions.generate_sliders(bin_max_frequency_value,slidersNum=4)
+            mod_amplitude_axis_list,empty= functions.signal_modification(sliders_data,amplitude_axis_list,slidersNum=4)
             phase=phase[:len(mod_amplitude_axis_list):1]
+            ifft_file = functions.inverse_fourier(mod_amplitude_axis_list,phase)
             modified_time_axis = np.linspace(0, time, len(mod_amplitude_axis_list))
             
 
     #-----------------------------------------------------------------------Sine wave-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         elif option=='Sine waves':
             freq_axis_list, amplitude_axis_list,bin_max_frequency_value=functions.bins_separation(frequencies, amplitude ,slidersNum=10)
-            sliders_data= functions.generate_sliders(bin_max_frequency_value,slidersNum=len(frequencies))
+            sliders_data= functions.generate_sliders(bin_max_frequency_value,slidersNum=10)
             mod_amplitude_axis_list,empty= functions.signal_modification(sliders_data,amplitude_axis_list,slidersNum=10)
             phase=phase[:len(mod_amplitude_axis_list):1]
+            ifft_file = functions.inverse_fourier(mod_amplitude_axis_list,phase)
             modified_time_axis = np.linspace(0, duration, len(mod_amplitude_axis_list))
         
 
@@ -109,6 +114,9 @@ if not option=="Take your pick":
 
 
         functions.plot_signal(time,data,frequencies,amplitude) #time-domain representation, This shows us the loudness (amplitude) of sound wave changing with time.
+
+
+
 
     #------------------------------------------------------------------------Dynamic-Plotting-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 

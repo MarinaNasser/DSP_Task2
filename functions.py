@@ -5,7 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import scipy as sc
 # from scipy.fftpack import fft
-from scipy.fft import fft, fftfreq
+# from np.fft import rfft, rfftfreq , irfft
 from scipy.signal import find_peaks
 import  streamlit_vertical_slider  as svs
 import librosa
@@ -45,7 +45,7 @@ def handle_uploaded_audio_file(uploaded_file):
 def plot_signal(time,data,freq,amp):
 
     SignalFigure, SignalAxis = plt.subplots(1, 2,figsize=(30, 10))
-    SignalAxis[0].plot(time,data)
+    SignalAxis[0].plot(time, data)
     SignalAxis[1].plot(freq,amp)
     SignalAxis[0].set_xlabel(xlabel='Time [sec]', size=25)
     SignalAxis[0].set_ylabel(ylabel='Amp litude', size=25)
@@ -61,7 +61,7 @@ def plot_signal(time,data,freq,amp):
 # get the fourier transform of the file
 def Fourier_transform(data, samplerate):
 
-    fft_sig = np.fft.fft(data)/len(data)  # Normalize data
+    fft_sig = np.fft.rfft(data)/len(data)  # Normalize data
     fft_sig = fft_sig[range(int(len(data)/2))] # Exclude sampling frequency
     amplitude= np.abs(fft_sig)
     phase =np.angle(fft_sig) # return the angle of the complex argument
@@ -172,7 +172,9 @@ def signal_modification(sliders_data , List_amplitude_axis,slidersNum):
     empty.empty()
     modified_bins=[]
     for i in range(0,slidersNum):  
-        modified_bins.append( 10**(sliders_data[i]/20) * List_amplitude_axis[i])
+        # modified_bins.append( 10**(sliders_data[i]/20) * List_amplitude_axis[i])
+        modified_bins.append( sliders_data[i] * List_amplitude_axis[i])
+
     
     mod_amplitude_axis_list=list(itertools.chain.from_iterable(modified_bins))
     
@@ -204,7 +206,7 @@ def music_modification(frequency, amplitude, sliders_data):
 def inverse_fourier(mod_amplitude_axis_list,phase):
     modified_signal=np.multiply(mod_amplitude_axis_list,np.exp(1j*phase))
     # modified_signal=mod_amplitude_axis_list*np.cos(phase) +1j*mod_amplitude_axis_list*np.sin(phase) #list of complex no
-    ifft_file=sc.ifft(modified_signal)
+    ifft_file=np.fft.irfft(modified_signal)
     # ifft_file=np.fft.ifft(modified_signal)
     return ifft_file
 
