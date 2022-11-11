@@ -61,7 +61,7 @@ def plot_signal(time,data,freq,amp):
 # get the fourier transform of the file
 def Fourier_transform(data, samplerate):
 
-    fft_sig = np.fft.rfft(data)/len(data)  # Normalize data
+    fft_sig = np.fft.fft(data)/len(data)  # Normalize data
     fft_sig = fft_sig[range(int(len(data)/2))] # Exclude sampling frequency
     amplitude= np.abs(fft_sig)
     phase =np.angle(fft_sig) # return the angle of the complex argument
@@ -204,9 +204,11 @@ def music_modification(frequency, amplitude, sliders_data):
     return amplitude, empty
 
 def inverse_fourier(mod_amplitude_axis_list,phase):
+
+
     modified_signal=np.multiply(mod_amplitude_axis_list,np.exp(1j*phase))
     # modified_signal=mod_amplitude_axis_list*np.cos(phase) +1j*mod_amplitude_axis_list*np.sin(phase) #list of complex no
-    ifft_file=np.fft.irfft(modified_signal)
+    ifft_file=np.fft.ifft(modified_signal)
     # ifft_file=np.fft.ifft(modified_signal)
     return ifft_file
 
