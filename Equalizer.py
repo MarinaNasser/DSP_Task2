@@ -18,7 +18,7 @@ with open("Equalizer.css")as source_des:
 
 #------------------------------------------------------------------Upload_file----------------------------------------------------------------------------------------------------------------------------------------------
 
-option = st.sidebar.selectbox("Pick your sample!", options=[ "Music", "Biosignal", "Sine waves", "Vowels"])
+option = st.sidebar.selectbox("Pick your sample!", options=[ "Music", "Biosignal", "audio", "Vowels"])
 
 
 uploaded_file = st.sidebar.file_uploader("uploader",key="uploaded_file",label_visibility="hidden")
@@ -86,8 +86,8 @@ if not data==[]:
         mod_amplitude_axis_list,empty= functions.signal_modification(sliders_data,amplitude_axis_list,slidersNum=4)
             
         
-    #-----------------------------------------------------------------------Sine wave-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    elif option=='Sine waves':
+    #-----------------------------------------------------------------------audio-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    elif option=='audio':
         freq_axis_list, amplitude_axis_list,bin_max_frequency_value=functions.bins_separation(frequencies, amplitude ,slidersNum=10)
         sliders_data= functions.generate_sliders(bin_max_frequency_value,slidersNum=10)
         mod_amplitude_axis_list,empty= functions.signal_modification(sliders_data,amplitude_axis_list,slidersNum=10)
