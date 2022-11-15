@@ -65,6 +65,8 @@ def bins_separation(frequency, amplitude, slidersNum):
     freq_axis_list = []
     amplitude_axis_list = []
     bin_max_frequency_value = int(len(frequency)/slidersNum) # 50 60 70 80 90 100 120  len()=20  int(20/10)=2  
+    # st.write(len(frequency))
+    # st.write(bin_max_frequency_value)
     i = 0
     while(i < slidersNum):
         freq_axis_list.append(
@@ -74,7 +76,7 @@ def bins_separation(frequency, amplitude, slidersNum):
         i = i+1
     return freq_axis_list, amplitude_axis_list,bin_max_frequency_value
 #----------------------------------------------------------------------Generate Sliders-------------------------------------------------------------------------------------------------------------------------------------------------------
-def generate_sliders(bin_max_frequency_value , slidersNum,flag=True):
+def generate_sliders(bin_max_frequency_value,slidersNum,flag=True):
         min_value=0
         max_value=0
         sliders_data = []
@@ -84,17 +86,21 @@ def generate_sliders(bin_max_frequency_value , slidersNum,flag=True):
             with columns[i]:
                 min_value = - boundary
                 max_value =  boundary
+                # frequency_val = frequency[int(points_per_freq*(i))]+1
                 frequency_val = (i+1)*bin_max_frequency_value
                 slider=svs.vertical_slider(key=i, default_value=1, step=1, min_value=min_value, max_value=max_value)
                 if flag:
                     st.write(f" { frequency_val } HZ")
                 else:
-                   with columns[0]:
-                    st.write("Xylo")
-                   with columns[1]:
-                    st.write("Contrabass")
-                   with columns[2]:
-                    st.write("Drums")
+                    if i==0:
+                        with columns[0]:
+                            st.write("Xylo")
+                    elif i==1:
+                        with columns[1]:
+                            st.write("Contrabass")
+                    elif i==2:
+                        with columns[2]:
+                            st.write("Drums")
                  
                 if slider == None:
                     slider = 1
@@ -142,32 +148,47 @@ def signal_modification(sliders_data , List_amplitude_axis,slidersNum):
     
     return mod_amplitude_axis_list,empty
 
+
+# def signal_modification(sliders_data,amplitude,slidersNum,frequencies,fmax,bin_max_frequency_value,freq_axis_list):
+#     empty = st.empty()
+#     empty.empty()
+#     points_per_freq=len(frequencies) /fmax
+#     for i in range(0,slidersNum):  
+#         amplitude[(freq_axis_list[i*bin_max_frequency_value]*points_per_freq) : (freq_axis_list[(i+1)*bin_max_frequency_value]*points_per_freq)]*=sliders_data[0]
+#     return amplitude,empty
 #----------------------------------------------------------------------Musical Instruments-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------           
 
 def instruments( amplitude, frequencies, fmax,sliders_data):
     empty = st.empty()
     empty.empty()
-    points_per_freq=len(frequencies) /fmax    
-    max_freq_xylo_1=650
-    min_freq_xylo_1=300
-    max_freq_xylo_2=6000
-    min_freq_xylo_2=3500
-    amplitude[int(min_freq_xylo_1*points_per_freq):int(max_freq_xylo_1*points_per_freq)]*=sliders_data[0]
-    amplitude[int(min_freq_xylo_2*points_per_freq):int(max_freq_xylo_2*points_per_freq)]*=sliders_data[0]
-    max_freq_contrabass=3500
-    min_freq_contrabass=700
-    amplitude[int(min_freq_contrabass*points_per_freq):int(max_freq_contrabass*points_per_freq)]*=sliders_data[1]
-    max_freq_drums_1=17000
-    min_freq_drums_1=6000
-    max_freq_drums_2=300
-    min_freq_drums_2=10
-    max_freq_drums_3=700
-    min_freq_drums_3=600
-    amplitude[int(min_freq_drums_1*points_per_freq):int(max_freq_drums_1*points_per_freq)]*=sliders_data[2]
-    amplitude[int(min_freq_drums_2*points_per_freq):int(max_freq_drums_2*points_per_freq)]*=sliders_data[2]
-    amplitude[int(min_freq_drums_3*points_per_freq):int(max_freq_drums_3*points_per_freq)]*=sliders_data[2]
+    points_per_freq=len(frequencies) /fmax
 
+    #------------------Xylo---------------
+    Xylo_range=[300,650,3500,6000]
+    k=0
+    while k<len(Xylo_range):
+        amplitude[int(Xylo_range[k]*points_per_freq):int(Xylo_range[k+1]*points_per_freq)]*=sliders_data[0]
+        k+=2
+
+    #------------------contrabass---------------
+    contrabass_range=[700,3500]
+    j=0
+    while j<len(contrabass_range):
+        amplitude[int(contrabass_range[j]*points_per_freq):int(contrabass_range[j+1]*points_per_freq)]*=sliders_data[1]
+        j+=2
+    
+    #------------------Drums---------------
+    Drums_range=[10,300,600,700,6000,17000]
+    i=0
+    while i<len(Drums_range):
+        amplitude[int(Drums_range[i]*points_per_freq):int(Drums_range[i+1]*points_per_freq)]*=sliders_data[2]
+        i+=2
+  
     return amplitude,empty
+
+
+
+#-----------------------------------------------------------------Inverse Fourier-----------------------------------------------------------------------------------------------------------------------------------
 
 def inverse_fourier(mod_amplitude_axis_list,phase):
 
@@ -179,34 +200,28 @@ def inverse_fourier(mod_amplitude_axis_list,phase):
     return ifft_file
 
 
-#-----------------------------------------------------------------spectrogram-----------------------------------------------------------------------------------------------------------------------------------
-def plot_spectrogram(data,ifft_file,samplerate,mod_amplitude_axis_list):
+#-----------------------------------------------------------------Spectrogram-----------------------------------------------------------------------------------------------------------------------------------
+def plot_spectrogram(data,mod_amplitude_axis_list,sample_frequency):
 
-    # yticks for spectrograms
-    helper = [0, 2500, 5000, 7500, 10000, 12500, 15000, 17500, 20000]
-    spec_yticks = [6.28 * i for i in helper]
-    
     fig2, ax = plt.subplots(1, 2, figsize=(30, 10))
    
-    ax[0].specgram(data, Fs=samplerate)
+    ax[0].specgram(data, Fs=sample_frequency)
     ax[0].set_xlabel(xlabel='Time [sec]', size=25)
-    ax[0].set_ylabel(ylabel='Frequency Amplitude [rad/s]', size=25)
-    ax[0].set_yticks(helper)
-    ax[0].set_yticklabels(spec_yticks)
+    ax[0].set_ylabel(ylabel='Frequency [Hz]', size=25)
     ax[0].set_title("Original signal", fontsize=30)
     ax[0].tick_params(axis='both', which='both', labelsize=18)
 
-    ax[1].specgram(ifft_file, Fs=samplerate)
+    ax[1].specgram(mod_amplitude_axis_list, Fs=sample_frequency)
     ax[1].set_xlabel(xlabel='Time [sec]', size=25)
-    ax[1].set_ylabel(ylabel='Frequency Amplitude [rad/s]', size=25)
-    ax[1].set_yticks(helper)
-    ax[1].set_yticklabels(spec_yticks)
+    ax[1].set_ylabel(ylabel='Frequency [Hz]', size=25)
     ax[1].set_title("Modified signal", fontsize=30)
     ax[1].tick_params(axis='both', which='both', labelsize=18)
     
     st.pyplot(fig2)
 
-   
+
+#-----------------------------------------------------------------arrhythima-----------------------------------------------------------------------------------------------------------------------------------
+  
 def arrhythima():
 
     ecg = electrocardiogram()       # Calling the arrhythmia database of a woman
