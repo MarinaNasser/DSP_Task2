@@ -10,6 +10,12 @@ st.markdown("<h1 style='text-align: center; color:darkcyan;'>Signal Equalizer</h
 with open("Equalizer.css")as source_des:
     st.markdown(f"<style>{source_des.read()} </style>", unsafe_allow_html=True)
 
+if 'start' not in st.session_state:
+    st.session_state['start']=0
+if 'size1' not in st.session_state:
+    st.session_state['size1']=0
+if 'flag' not in st.session_state:
+    st.session_state['flag'] = 0
 #------------------------------------------------------------------Upload_file----------------------------------------------------------------------------------------------------------------------------------------------
 
 option = st.sidebar.selectbox("Pick your sample!", options=[ "Uniform Range Mode", "Vowels Mode", "Musical Instruments Mode", "Biological Signal Abnormalities"])
@@ -90,34 +96,32 @@ if not data==[]:
 
 #------------------------------------------------------------------------Inverse-Fourier-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-    inverse_button = st.sidebar.button("Display")
-    if inverse_button :
-        phase=phase[:len(mod_amplitude_axis_list):1]
-        ifft_file = functions.inverse_fourier(mod_amplitude_axis_list,phase)
-        modified_time_axis = np.linspace(0, duration, len(mod_amplitude_axis_list))
+    # inverse_button = st.sidebar.button("Display")
+    # if inverse_button :
+    phase=phase[:len(mod_amplitude_axis_list):1]
+    ifft_file = functions.inverse_fourier(mod_amplitude_axis_list,phase)
+    modified_time_axis = np.linspace(0, duration, len(mod_amplitude_axis_list))
 
-        if option == 'Musical Instruments Mode' or 'Vowels Mode':
-            st.sidebar.markdown('# Modified Signal')
-            modified_audio = ipd.Audio(ifft_file, rate=sample_frequency/2)
-            st.sidebar.write(modified_audio)
+    if option == 'Musical Instruments Mode' or 'Vowels Mode':
+        st.sidebar.markdown('# Modified Signal')
+        modified_audio = ipd.Audio(ifft_file, rate=sample_frequency/2)
+        st.sidebar.write(modified_audio)
 
-#------------------------------------------------------------------------Dynamic-Plotting-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-        original_time_axis = np.linspace(0, duration, len(data))
-        original_df = pd.DataFrame({'time': original_time_axis[::500], 'amplitude': data[:: 500]}, columns=['time', 'amplitude'])
-        modified_df=pd.DataFrame({'time': modified_time_axis[::500],'amplitude':mod_amplitude_axis_list[::500]}, columns=['time','amplitude'])
-        lines= functions.altair_plot(original_df,modified_df)
-        line_plot = st.altair_chart(lines)
-        start_btn = st.button('Start')
-
-        if start_btn:
-           functions.dynamic_plot(line_plot,original_df,modified_df)
 
 #---------------------------------------------------------------------------Spectrogram----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     st.sidebar.markdown('## Spectrogram')
     spec1 = st.sidebar.checkbox("Show", key=2)
     if spec1:
         functions.plot_spectrogram(data,mod_amplitude_axis_list,sample_frequency)
+
+#------------------------------------------------------------------------Dynamic-Plotting-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        start_btn  = st.button("start")
+        pause_btn  = st.button("pause")
+        resume_btn = st.button("resume")
+        # if inverse_button :
+        data = data[:len(ifft_file)]
+        functions.plotShow(data,ifft_file, start_btn,pause_btn,resume_btn, sample_frequency)
+
 
 
 
