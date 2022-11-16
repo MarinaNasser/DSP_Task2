@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 import os.path # used to know file extension
 import IPython.display as ipd
-import functions as functions 
+import functions 
 
 st.set_page_config(page_title= "Equalizer", layout="wide" ,page_icon=":musical_keyboard:")
 st.markdown("<h1 style='text-align: center; color:darkcyan;'>Signal Equalizer</h1>", unsafe_allow_html=True)
@@ -56,12 +56,13 @@ elif option == "Biological Signal Abnormalities":
     duration = time
 #----------------------------------------------------------------------Sliders-------------------------------------------------------------------------------------------------------------------------------------------------------
 
-else:
-    functions.generate_sliders(bin_max_frequency_value=10,slidersNum=10)
+# else:
+#     functions.generate_sliders(bin_max_frequency_value=10,slidersNum=10)
 #----------------------------------------------------------------------Fourier-------------------------------------------------------------------------------------------------------------------------------------------------------
 flag=True
 if not data==[]:
     fft_sig, amplitude,phase,frequencies=functions.Fourier_transform(data,sample_frequency)
+
 
 #----------------------------------------------------------------------Musical Instruments Mode-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------       
     if  option=='Musical Instruments Mode' :
@@ -84,12 +85,12 @@ if not data==[]:
 #-------------------------------------------------------Bins_separation/generate sliders/signal-modification--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     points_per_freq=len(frequencies) /fmax
     freq_axis_list, amplitude_axis_list,bin_max_frequency_value=functions.bins_separation(frequencies, amplitude ,slidersNum)
-    sliders_data= functions.generate_sliders(bin_max_frequency_value,slidersNum,flag)
+    sliders_data= functions.generate_sliders(fmax,frequencies,points_per_freq,bin_max_frequency_value,slidersNum,flag)
 
     if  option=='Musical Instruments Mode' :
         mod_amplitude_axis_list,empty= functions.instruments(amplitude,frequencies,fmax,sliders_data)
     else:
-        mod_amplitude_axis_list,empty= functions.signal_modification(sliders_data , amplitude_axis_list,slidersNum)
+        mod_amplitude_axis_list,empty= functions.signal_modification(sliders_data,amplitude,slidersNum,frequencies,fmax,bin_max_frequency_value,freq_axis_list)
 #------------------------------------------------------------------------Static-plotting--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
     functions.plot_signal(time,data,frequencies,amplitude) #time-domain representation, This shows us the loudness (amplitude) of sound wave changing with time.    
@@ -104,7 +105,7 @@ if not data==[]:
 
     if option == 'Musical Instruments Mode' or 'Vowels Mode':
         st.sidebar.markdown('# Modified Signal')
-        modified_audio = ipd.Audio(ifft_file, rate=sample_frequency/2)
+        modified_audio = ipd.Audio(ifft_file, rate=sample_frequency)
         st.sidebar.write(modified_audio)
 
 
