@@ -32,12 +32,12 @@ def handle_uploaded_audio_file(uploaded_file):
 #------------------------------------------------------------------------Static-plotting--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def plot_signal(time,data,freq,amp):
-
+        # amp_dbs = 20 * np.log10(np.abs(amp))
         SignalFigure, SignalAxis = plt.subplots(1, 2,figsize=(30, 10))
         SignalAxis[0].plot(time,data)
         SignalAxis[1].plot(freq,amp)
         SignalAxis[0].set_xlabel(xlabel='Time [sec]', size=25)
-        SignalAxis[0].set_ylabel(ylabel='Amp litude', size=25)
+        SignalAxis[0].set_ylabel(ylabel='Amplitude', size=25)
         SignalAxis[0].set_title("Time representation", fontsize=30)
 
         SignalAxis[1].set_xlabel(xlabel='Frequency [Hz]', size=25)
@@ -77,7 +77,7 @@ def bins_separation(frequency, amplitude, slidersNum):
         i = i+1
     return freq_axis_list, amplitude_axis_list,bin_max_frequency_value
 #----------------------------------------------------------------------Generate Sliders-------------------------------------------------------------------------------------------------------------------------------------------------------
-def generate_sliders(bin_max_frequency_value,slidersNum,flag=True):
+def generate_sliders(fmax,frequency,points_per_freq,bin_max_frequency_value,slidersNum,flag=True):
         min_value=0
         max_value=0
         sliders_data = []
@@ -87,8 +87,9 @@ def generate_sliders(bin_max_frequency_value,slidersNum,flag=True):
             with columns[i]:
                 min_value = - boundary
                 max_value =  boundary
-                # frequency_val = frequency[int(points_per_freq*(i))]+1
-                frequency_val = (i+1)*bin_max_frequency_value
+                # frequency_val = int(frequency[int(points_per_freq*(i+1))])
+                frequency_val= int(fmax/slidersNum)*(i+1)
+                # frequency_val = (i+1)*bin_max_frequency_value
                 slider=svs.vertical_slider(key=i, default_value=1, step=1, min_value=min_value, max_value=max_value)
                 if flag:
                     st.write(f" { frequency_val } HZ")
@@ -216,14 +217,14 @@ def signal_modification(sliders_data , List_amplitude_axis,slidersNum):
     return mod_amplitude_axis_list,empty
 
 
-# def signal_modification(sliders_data,amplitude,slidersNum,frequencies,fmax,bin_max_frequency_value,freq_axis_list):
-#     empty = st.empty()
-#     empty.empty()
-#     points_per_freq=len(frequencies) /fmax
-#     for i in range(0,slidersNum):  
-#         amplitude[(freq_axis_list[i*bin_max_frequency_value]*points_per_freq) : (freq_axis_list[(i+1)*bin_max_frequency_value]*points_per_freq)]*=sliders_data[0]
-#     return amplitude,empty
-#----------------------------------------------------------------------Musical Instruments-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------           
+def signal_modification(sliders_data,amplitude,slidersNum,frequencies,fmax,bin_max_frequency_value,freq_axis_list):
+    empty = st.empty()
+    empty.empty()
+    points_per_freq=len(frequencies) /fmax
+    for i in range(0,slidersNum-1):  
+        amplitude[int((fmax/slidersNum)*(i)*points_per_freq) :int((fmax/slidersNum)*(i+1)*points_per_freq)]*=sliders_data[i]
+    return amplitude,empty
+# ----------------------------------------------------------------------Musical Instruments-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------           
 
 def instruments( amplitude, frequencies, fmax,sliders_data):
     empty = st.empty()
