@@ -62,8 +62,7 @@ elif option == "Biological Signal Abnormalities":
 flag=True
 if not data==[]:
     fft_sig, amplitude,phase,frequencies=functions.Fourier_transform(data,sample_frequency)
-    st.write(frequencies,amplitude)
-    st.write(sample_frequency,samplerate,fmax)
+
 
 #----------------------------------------------------------------------Musical Instruments Mode-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------       
     if  option=='Musical Instruments Mode' :
@@ -106,7 +105,7 @@ if not data==[]:
 
     if option == 'Musical Instruments Mode' or 'Vowels Mode':
         st.sidebar.markdown('# Modified Signal')
-        modified_audio = ipd.Audio(ifft_file, rate=sample_frequency/2)
+        modified_audio = ipd.Audio(ifft_file, rate=sample_frequency)
         st.sidebar.write(modified_audio)
 
 
