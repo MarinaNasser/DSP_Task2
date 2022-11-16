@@ -115,9 +115,9 @@ if not data==[]:
         functions.plot_spectrogram(data,mod_amplitude_axis_list,sample_frequency)
 
 #------------------------------------------------------------------------Dynamic-Plotting-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        start_btn  = st.button("start")
-        pause_btn  = st.button("pause")
-        resume_btn = st.button("resume")
+        start_btn  = st.sidebar.button("start")
+        pause_btn  = st.sidebar.button("pause")
+        resume_btn = st.sidebar.button("resume")
         # if inverse_button :
         data = data[:len(ifft_file)]
         functions.plotShow(data,ifft_file, start_btn,pause_btn,resume_btn, sample_frequency)
