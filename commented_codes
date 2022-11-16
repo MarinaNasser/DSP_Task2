@@ -103,3 +103,123 @@ def handled_audio
     # plt.ylabel('Amplitude')
     
     # st.plotly_chart(SignalFigure,use_container_width=True)
+
+
+       
+#-----------------------------------------------------------------------Vowels---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+      if  option=='Vowels Mode':
+         slidersNum=10
+         # freq_axis_list, amplitude_axis_list,bin_max_frequency_value=functions.bins_separation(frequencies, amplitude ,slidersNum=10)
+         # sliders_data= functions.generate_sliders(bin_max_frequency_value,slidersNum=10)
+         # mod_amplitude_axis_list,empty= functions.signal_modification(sliders_data,amplitude_axis_list,slidersNum=10)
+         # frequency= frequencies[:len(mod_amplitude_axis_list):1]
+            
+               
+      #----------------------------------------------------------------------Musical Instruments Mode-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------       
+
+      elif option=='Musical Instruments Mode' :
+         mod_amplitude_axis_list,empty= functions.instruments(amplitude,frequencies,samplerate)
+
+
+
+      #----------------------------------------------------------------------Biosignal------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      elif option=='Biological Signal Abnormalities':
+         slidersNum=4
+         # freq_axis_list, amplitude_axis_list,bin_max_frequency_value=functions.bins_separation(frequencies, amplitude ,slidersNum=4)
+         # sliders_data= functions.generate_sliders(bin_max_frequency_value,slidersNum=4)
+         # mod_amplitude_axis_list,empty= functions.signal_modification(sliders_data,amplitude_axis_list,slidersNum=4)
+               
+         
+      #-----------------------------------------------------------------------audio-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      elif option=='Uniform Range Mode':
+         slidersNum=10
+         # freq_axis_list, amplitude_axis_list,bin_max_frequency_value=functions.bins_separation(frequencies, amplitude ,slidersNum=10)
+         # sliders_data= functions.generate_sliders(bin_max_frequency_value,slidersNum=10)
+         # mod_amplitude_axis_list,empty= functions.signal_modification(sliders_data,amplitude_axis_list,slidersNum=10)
+      #------------------------------------------------------------------------Static-plotting--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+def plot_signal(time,data,freq,amp):
+
+    if data.ndim==1:
+        SignalFigure, SignalAxis = plt.subplots(1, 2,figsize=(30, 10))
+        SignalAxis[0].plot(time,data)
+        SignalAxis[1].plot(freq,amp)
+        SignalAxis[0].set_xlabel(xlabel='Time [sec]', size=25)
+        SignalAxis[0].set_ylabel(ylabel='Amp litude', size=25)
+        SignalAxis[0].set_title("Time representation", fontsize=30)
+
+        SignalAxis[1].set_xlabel(xlabel='Frequency [Hz]', size=25)
+        SignalAxis[1].set_ylabel(ylabel='Amplitude [dB]', size=25)
+        SignalAxis[1].set_title("Frequency representation", fontsize=30)
+
+        st.pyplot(SignalFigure)
+    else:
+        data_1=[]
+        data_2=[]
+        for i in range(data.shape[0]):
+            data_1.append(data[i][0])
+            data_2.append(data[i][1])
+        data_1=np.array(data_1)
+        data_2=np.array(data_2)
+        data=data_1
+        SignalFigure, SignalAxis = plt.subplots(1, 2,figsize=(30, 10))
+        SignalAxis[0].plot(time,data)
+        SignalAxis[1].plot(freq,amp)
+        SignalAxis[0].set_xlabel(xlabel='Time [sec]', size=25)
+        SignalAxis[0].set_ylabel(ylabel='Amp litude', size=25)
+        SignalAxis[0].set_title("Time representation", fontsize=30)
+        
+        SignalAxis[1].set_xlabel(xlabel='Frequency [Hz]', size=25)
+        SignalAxis[1].set_ylabel(ylabel='Amplitude [dB]', size=25)
+        SignalAxis[1].set_title("Frequency representation", fontsize=30)
+        
+        st.pyplot(SignalFigure)
+
+
+
+
+def instruments( amplitude, frequencies, sample_rate):
+    empty = st.empty()
+    empty.empty()
+    points_per_freq=len(frequencies) /(sample_rate / 2)
+    columns = st.columns(3)
+    with columns[0]:
+        slider1=svs.vertical_slider(key=1, default_value=1, step=1, min_value=0, max_value=10)
+        st.write("Xylo")
+        if slider1 == None:
+            slider1 = 1
+        max_freq_1=650
+        min_freq_1=300
+        max_freq_2=6000
+        min_freq_2=3500
+        amplitude[int(min_freq_1*points_per_freq):int(max_freq_1*points_per_freq)]*=slider1
+        amplitude[int(min_freq_2*points_per_freq):int(max_freq_2*points_per_freq)]*=slider1
+
+    with columns[1]:
+        slider2=svs.vertical_slider(key=2, default_value=1, step=1, min_value=0, max_value=10)
+        st.write("Contrabass")
+        if slider2 == None:
+            slider2 = 1
+            # sliders_data.append(slider)
+        max_freq=3500
+        min_freq=700
+        amplitude[int(min_freq*points_per_freq):int(max_freq*points_per_freq)]*=slider2
+    with columns[2]:
+        slider3=svs.vertical_slider(key=3, default_value=1, step=1, min_value=0, max_value=10)
+        st.write("Drums")
+        if slider3 == None:
+            slider3 = 1
+            # sliders_data.append(slider)
+        max_freq=17000
+        min_freq=6000
+        max_freq_2=300
+        min_freq_2=10
+        max_freq_3=700
+        min_freq_3=600
+        amplitude[int(min_freq*points_per_freq):int(max_freq*points_per_freq)]*=slider3
+        amplitude[int(min_freq_2*points_per_freq):int(max_freq_2*points_per_freq)]*=slider3
+        amplitude[int(min_freq_3*points_per_freq):int(max_freq_3*points_per_freq)]*=slider3
+
+    return amplitude,empty
