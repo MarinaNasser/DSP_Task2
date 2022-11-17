@@ -34,7 +34,7 @@ def generate_sliders(sliders_num,max_freq,flag=True):
         max_value=0
         sliders_data = []
         Names=["Xylo", "Contrabass" , "Drums", "Flute", "Violin", "Trombone","Bradycardia","Normal Sinus Rhythm", "Sinus Tachyardia","Atrial Tachycatdia","S","Q"]
-        boundary = int(50)
+        boundary = int(5)
         columns = st.columns(sliders_num)
         k=0
         for i in range(0, sliders_num):
