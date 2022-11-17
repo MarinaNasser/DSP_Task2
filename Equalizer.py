@@ -53,11 +53,13 @@ if uploaded_file is not None:
         st.sidebar.audio(file_name)
 #----------------------------------------------------------------------Sliders-------------------------------------------------------------------------------------------------------------------------------------------------------
 elif option== 'Musical Instruments Mode' :
-    functions.generate_sliders(6,10,False)
+    functions.generate_sliders(6,10,1)
 elif option== 'Biological Signal Abnormalities' :
-    functions.generate_sliders(4,10,False)
+    functions.generate_sliders(4,10,3)
+elif option== 'Vowels Mode' :
+    functions.generate_sliders(3,10,2)
 else:
-    functions.generate_sliders(10,10,flag)
+    functions.generate_sliders(10,10,4)
 #----------------------------------------------------------------------Fourier-------------------------------------------------------------------------------------------------------------------------------------------------------
 if not data==[]:
     fft_sig, amplitude,phase,frequencies=functions.Fourier_transform(data,sample_frequency)
@@ -65,29 +67,30 @@ if not data==[]:
 #----------------------------------------------------------------------Musical Instruments Mode-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------       
     if  option=='Musical Instruments Mode' :
         sliders_num=6
-        flag=False
+        mode=1
         
 #-----------------------------------------------------------------------Vowels---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     elif option=='Vowels Mode':
-        sliders_num=2
-        flag=False
+        sliders_num=3
+        mode=2
         
 #----------------------------------------------------------------------Biological Signal Abnormalities-------------------------------------------------------------------------------------------------------------------------------------------------------
     elif option=='Biological Signal Abnormalities':
         sliders_num=4
-        flag=False
+        mode=3
         
 #-----------------------------------------------------------------------Uniform Range Mode-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     elif option=='Uniform Range Mode':
         sliders_num=10
+        mode=4
     
 #-------------------------------------------------------generate sliders/signal-modification--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     points_per_freq=len(frequencies) /max_freq
-    sliders_data= functions.generate_sliders(sliders_num,max_freq,flag)
+    sliders_data= functions.generate_sliders(sliders_num,max_freq,mode)
     if ext=='wav':
         st.markdown('## Modified Signal')
 
-    mod_amplitude_axis_list,empty= functions.signal_modification(points_per_freq,max_freq,sliders_num,amplitude,sliders_data,flag)
+    mod_amplitude_axis_list,empty= functions.signal_modification(points_per_freq,max_freq,sliders_num,amplitude,sliders_data,mode)
 #------------------------------------------------------------------------Static-plotting--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
     # functions.plot_signal(time,data,frequencies,amplitude) #time-domain representation, This shows us the loudness (amplitude) of sound wave changing with time.    

@@ -33,11 +33,11 @@ def handle_uploaded_audio_file(uploaded_file):
     return samples, sample_frequency
    
 #----------------------------------------------------------------------Generate Sliders-------------------------------------------------------------------------------------------------------------------------------------------------------
-def generate_sliders(sliders_num,max_freq, flag = True):
+def generate_sliders(sliders_num,max_freq, mode):
         min_value=0
         max_value=0
         sliders_data = []
-        Names=["Xylo", "Contrabass" , "Drums", "Flute", "Violin", "Trombone","Normal Sinus Rhythm","Bradycardia", "Sinus Tachyardia","Ventricular Tachycardia","S","Q"]
+        Names=["Xylo", "Contrabass" , "Drums", "Flute", "Violin", "Trombone","Normal Sinus Rhythm","Bradycardia", "Sinus Tachyardia","Ventricular Tachycardia","S","Q","M"]
         boundary = int(5)
         columns = st.columns(sliders_num)
         k=0
@@ -49,7 +49,7 @@ def generate_sliders(sliders_num,max_freq, flag = True):
                 frequency_val= int(max_freq/sliders_num)*(i+1)
                 slider=svs.vertical_slider(key=i, default_value=1, step=1, min_value=min_value, max_value=max_value
                 )
-                if flag:
+                if mode==4 :
                     st.write(f" { frequency_val } HZ")
                 else:
                     if sliders_num == 6: k=k
@@ -76,21 +76,22 @@ def Fourier_transform(data, sample_frequency):
     return fft_sig, amplitude,phase,frequencies
 
 #----------------------------------------------------------------------Signal Modification-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------       
-def signal_modification(points_per_freq,max_freq,sliders_num,amplitude,sliders_data,flag):
+def signal_modification(points_per_freq,max_freq,sliders_num,amplitude,sliders_data,mode):
     empty = st.empty()
     empty.empty()
-    if flag:
-        target_freq=max_freq/sliders_num
-        for i in range(0,sliders_num):  
-            amplitude[int(target_freq*(i)*points_per_freq) :int(target_freq*(i+1)*points_per_freq)]*=sliders_data[i]
-        
-   
-    else:
+    if mode==1:
         ranges = [[300,650,3500,6000],[700,3500],[0,700,600,700,6000,17000],[0,700],[700,2500],[2500,4000]]
         for instrumentIndex in range(len(ranges)):
             for index in range(0,len(ranges[instrumentIndex]),2):
                 amplitude[int(ranges[instrumentIndex][index]*points_per_freq):int(ranges[instrumentIndex][index+1]*points_per_freq)]*=sliders_data[instrumentIndex]
 
+       
+    else:
+        target_freq=max_freq/sliders_num
+        for i in range(0,sliders_num):  
+            amplitude[int(target_freq*(i)*points_per_freq) :int(target_freq*(i+1)*points_per_freq)]*=sliders_data[i]
+        
+   
     return amplitude,empty  
     # ranges = [[0,60],[60,90],[90,140],[140,240]]    
 # ----------------------------------------------------------------------Musical Instruments Modification-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------           
