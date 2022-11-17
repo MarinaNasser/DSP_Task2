@@ -223,3 +223,46 @@ def instruments( amplitude, frequencies, sample_rate):
         amplitude[int(min_freq_3*points_per_freq):int(max_freq_3*points_per_freq)]*=slider3
 
     return amplitude,empty
+
+
+
+    
+    # #------------------Xylo---------------
+    # # target_frequencies=[Xylo_range,contrabass_range,]
+    # Xylo_range=[300,650,3500,6000]
+    # k=0
+    # while k<len(Xylo_range):
+    #     amplitude[int(Xylo_range[k]*points_per_freq):int(Xylo_range[k+1]*points_per_freq)]*=sliders_data[0]
+    #     k+=2
+
+    # #------------------contrabass---------------
+    # contrabass_range=[700,3500]
+    # j=0
+    # while j<len(contrabass_range):
+    #     amplitude[int(contrabass_range[j]*points_per_freq):int(contrabass_range[j+1]*points_per_freq)]*=sliders_data[1]
+    #     j+=2
+    
+    # #------------------Drums---------------
+    # Drums_range=[0,700,600,700,6000,17000]
+    # i=0
+    # while i<len(Drums_range):
+    #     amplitude[int(Drums_range[i]*points_per_freq):int(Drums_range[i+1]*points_per_freq)]*=sliders_data[2]
+    #     i+=2
+    # #------------------Flute---------------
+    # Flute_range=[0,700]
+    # f=0
+    # while f<len(Flute_range):
+    #     amplitude[int(Flute_range[f]*points_per_freq):int(Flute_range[f+1]*points_per_freq)]*=sliders_data[3]
+    #     f+=2
+    # #------------------Violin---------------
+    # Violin_range=[700,2500]
+    # v=0
+    # while v<len(Violin_range):
+    #     amplitude[int(Violin_range[v]*points_per_freq):int(Violin_range[v+1]*points_per_freq)]*=sliders_data[4]
+    #     v+=2
+    #   #------------------Trombone---------------
+    # Trombone_range=[2500,4000]
+    # t=0
+    # while t<len(Trombone_range):
+    #     amplitude[int(Trombone_range[t]*points_per_freq):int(Trombone_range[t+1]*points_per_freq)]*=sliders_data[5]
+    #     t+=2
