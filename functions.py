@@ -99,7 +99,6 @@ def signal_modification(points_per_freq,frequencies,max_freq,sliders_num,amplitu
 def instruments_modification(points_per_freq, amplitude,sliders_data):
     empty = st.empty()
     empty.empty()
-    points_per_freq
     #------------------Xylo---------------
     Xylo_range=[300,650,3500,6000]
     k=0

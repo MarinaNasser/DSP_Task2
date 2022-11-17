@@ -102,12 +102,12 @@ if not data==[]:
         functions.plot_spectrogram(data,ifft_file,sample_frequency)
 
 #------------------------------------------------------------------------Dynamic-Plotting-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        col1, col2, col3, col4, col5, col6, col7, col8, col9, col10, col11, col12 = st.columns([1,1,1,1,1,1,1,1,1,1,1,1])
-        with col1:
+        column1, column2, column3, column4, column5, column6, column7, column8, column9, column10, column11, column12 = st.columns([1,1,1,1,1,1,1,1,1,1,1,1])
+        with column1:
             start_btn  = st.button("▶️")
-        with col2:
+        with column2:
             pause_btn  = st.button("⏸")
-        with col3:
+        with column3:
             resume_btn = st.button("⏯")
         data = data[:len(ifft_file)]
         functions.plotShow(data,ifft_file, start_btn,pause_btn,resume_btn, sample_frequency)
