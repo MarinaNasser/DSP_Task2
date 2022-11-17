@@ -98,7 +98,7 @@ def instruments_modification(points_per_freq, amplitude,sliders_data):
         j+=2
     
     #------------------Drums---------------
-    Drums_range=[0,700,600,700,6000,17000]
+    Drums_range=[0,300,600,700,6000,17000]
     i=0
     while i<len(Drums_range):
         amplitude[int(Drums_range[i]*points_per_freq):int(Drums_range[i+1]*points_per_freq)]*=sliders_data[2]
