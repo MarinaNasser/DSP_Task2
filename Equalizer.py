@@ -5,7 +5,7 @@ import os.path # used to know file extension
 import IPython.display as ipd
 import functions 
 
-
+ 
 st.set_page_config(page_title= "Equalizer", layout="wide" ,page_icon=":musical_keyboard:")
 st.markdown("<h1 style='text-align: center; color:darkcyan;'>Signal Equalizer</h1>", unsafe_allow_html=True)
 with open("Equalizer.css")as source_des:
