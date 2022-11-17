@@ -1,6 +1,6 @@
- /* .main.css-k1vhr4.egzxvld3{
+/* .main.css-k1vhr4.egzxvld3{
     background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(156,177,243,1) 100%, rgba(0,212,255,1) 100%);
-}  */
+} */
 
 .css-1k0b3x4.e1fqkh3o2{
     padding-top: 50;
@@ -15,26 +15,25 @@
   
     position: relative;
     bottom: 70px;
-  } 
-
-  /* sidebar */
-.css-163ttbj {
-    position: relative;
-    top: 2px;
-    background-color: rgb(24, 126, 139);
-    z-index: 999991;
-    min-width: 244px;
-    max-width: 550px;
-    transform: none;
-    transition: transform 300ms ease 0s, min-width 300ms ease 0s, max-width 300ms ease 0s;
-    background-image:  linear-gradient(180deg,#99c6dd 0,#166d85 100%);
   }
- /* brows file */
+ /* sidebar */
+ .css-163ttbj {
+  position: relative;
+  top: 2px;
+  background-color: rgb(24, 126, 139);
+  z-index: 999991;
+  min-width: 244px;
+  max-width: 550px;
+  transform: none;
+  transition: transform 300ms ease 0s, min-width 300ms ease 0s, max-width 300ms ease 0s;
+  background-image:  linear-gradient(180deg,#99c6dd 0,#166d85 100%);
+}
+/* brows file */
 .css-1dhfpht {
-    display: flex;
-    -moz-box-align: center;
-    align-items: center;
-    padding: 1rem;
-    background-color: #0f6d84;
-  }
-
+  display: flex;
+  -moz-box-align: center;
+  align-items: center;
+  padding: 1rem;
+  background-color: #0f6d84;
+}
+/* 0 

@@ -5,10 +5,10 @@ Level 3, 1st semester.
 ### Course: Digital signal processing, Task 1 (11/10/2022)
 
 ### Members
-| Team Members' Names                                  | Section| B.N. |
-|---------------------------------------------------   |:------:|:----:|
-| [Marina Nasser](https://github.com/MarinaNasser)     |    2   |  12  |
-| [Ghofran Mohamed](https://github.com/GuFranMohammed) |    2   |   8  |
+| Team Members' Names                               | Section| B.N. |
+|---------------------------------------------------|:------:|:----:|
+| [Marina Nasser](https://github.com/MarinaNasser)  |    2   |  12  |
+|                                                   |        |      |
 
 
 
