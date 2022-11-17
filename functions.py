@@ -75,52 +75,22 @@ def Fourier_transform(data, sample_frequency):
 def signal_modification(points_per_freq,max_freq,sliders_num,amplitude,sliders_data):
     empty = st.empty()
     empty.empty()
-    # points_per_freq=len(frequencies) /max_freq
     for i in range(0,sliders_num):  
         amplitude[int((max_freq/sliders_num)*(i)*points_per_freq) :int((max_freq/sliders_num)*(i+1)*points_per_freq)]*=sliders_data[i]
     return amplitude,empty
+
 # ----------------------------------------------------------------------Musical Instruments Modification-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------           
 def instruments_modification(points_per_freq, amplitude,sliders_data):
     empty = st.empty()
     empty.empty()
-    #------------------Xylo---------------
-    Xylo_range=[300,650,3500,6000]
-    k=0
-    while k<len(Xylo_range):
-        amplitude[int(Xylo_range[k]*points_per_freq):int(Xylo_range[k+1]*points_per_freq)]*=sliders_data[0]
-        k+=2
 
-    #------------------contrabass---------------
-    contrabass_range=[700,3500]
-    j=0
-    while j<len(contrabass_range):
-        amplitude[int(contrabass_range[j]*points_per_freq):int(contrabass_range[j+1]*points_per_freq)]*=sliders_data[1]
-        j+=2
-    
-    #------------------Drums---------------
-    Drums_range=[0,700,600,700,6000,17000]
-    i=0
-    while i<len(Drums_range):
-        amplitude[int(Drums_range[i]*points_per_freq):int(Drums_range[i+1]*points_per_freq)]*=sliders_data[2]
-        i+=2
-    #------------------Flute---------------
-    Flute_range=[0,700]
-    f=0
-    while f<len(Flute_range):
-        amplitude[int(Flute_range[f]*points_per_freq):int(Flute_range[f+1]*points_per_freq)]*=sliders_data[3]
-        f+=2
-    #------------------Violin---------------
-    Violin_range=[700,2500]
-    v=0
-    while v<len(Violin_range):
-        amplitude[int(Violin_range[v]*points_per_freq):int(Violin_range[v+1]*points_per_freq)]*=sliders_data[4]
-        v+=2
-      #------------------Trombone---------------
-    Trombone_range=[2500,4000]
-    t=0
-    while t<len(Trombone_range):
-        amplitude[int(Trombone_range[t]*points_per_freq):int(Trombone_range[t+1]*points_per_freq)]*=sliders_data[5]
-        t+=2
+
+    ranges = [[300,650,3500,6000],[700,3500],[0,700,600,700,6000,17000],[0,700],[700,2500],[2500,4000]]
+    for instrumentIndex in range(len(ranges)):
+        for index in range(0,len(ranges[instrumentIndex]),2):
+            amplitude[int(ranges[instrumentIndex][index]*points_per_freq):int(ranges[instrumentIndex][index+1]*points_per_freq)]*=sliders_data[instrumentIndex]
+
+
   
     return amplitude,empty
 
@@ -148,22 +118,50 @@ def plot_signal(time,data,fft_time,ifft_file,frequencies,amplitude):
 
 #----------------------------------------------------------------------Dynamic Plotting-------------------------------------------------------------------------------------------------------------------------------------------------------
 
-def plot_animation(df):
-    brush = alt.selection_interval()
-    chart1 = alt.Chart(df).mark_line().encode(
-            x=alt.X('time', axis=alt.Axis(title='Time')),
-            # y=alt.Y('amplitude', axis=alt.Axis(title='Amplitude')),
-        ).properties(
-            width=400,
-            height=150
-        ).add_selection(
-            brush).interactive()
+# def plot_animation(df):
+#     brush = alt.selection_interval()
+#     chart1 = alt.Chart(df).mark_line().encode(
+#             x=alt.X('time', axis=alt.Axis(title='Time')),
+#             # y=alt.Y('amplitude', axis=alt.Axis(title='Amplitude')),
+#         ).properties(
+#             width=400,
+#             height=150
+#         ).add_selection(
+#             brush).interactive()
 
-    figure = chart1.encode(
-                y=alt.Y('amplitude',axis=alt.Axis(title='Amplitude')))| chart1.encode(
-                y=alt.Y('amplitude after processing',axis=alt.Axis(title='Amplitude after'))).add_selection(
-            brush)
-    return figure
+#     figure = chart1.encode(
+#                 y=alt.Y('amplitude',axis=alt.Axis(title='Amplitude')))| chart1.encode(
+#                 y=alt.Y('amplitude after processing',axis=alt.Axis(title='Amplitude after'))).add_selection(
+#             brush)
+#     return figure
+
+def plot_animation(df1, df2):
+    resize= alt.selection_interval()
+    chart1 = alt.Chart(df1).mark_line().encode(
+        x=alt.X('time:T', axis=alt.Axis(title='time', labels=False)),
+        y=alt.Y('signal:Q', axis=alt.Axis(title='Amplitude'))
+    ).properties(
+        width=550,
+        height=230,
+        title="Original Audio"
+    ).add_selection(
+        resize
+    )
+
+    chart2 = alt.Chart(df2).mark_line().encode(
+        x=alt.X('time:T', axis=alt.Axis(title='time', labels=False)),
+        y=alt.Y('signal:Q', axis=alt.Axis(title='Amplitude'))
+    ).properties(
+        width=550,
+        height=230,
+        title="Modified Audio"
+    ).add_selection(
+        resize
+    )
+
+    chart = alt.concat(chart1, chart2)
+
+    return chart
 
 
 
@@ -174,64 +172,67 @@ def plotShow(data, idata,start_btn,pause_btn,resume_btn,sr):
     if time1>1:
         time1 = int(time1)
     time1 = np.linspace(0,time1,len(data))   
-    df = pd.DataFrame({'time': time1[::300], 
-                        'amplitude': data[:: 300],
-                        'amplitude after processing': idata[::300]}, columns=[
-                        'time', 'amplitude','amplitude after processing'])
-    N = df.shape[0]  
+    df1 = pd.DataFrame({'time': time1[::300], 
+                        'amplitude': data[:: 300]}, columns=[
+                        'time', 'amplitude'])
+    df2=pd.DataFrame({'time': time1[::300], 
+                        'amplitude': idata[:: 300]}, columns=[
+                        'time', 'amplitude'])
+
+    N = df1.shape[0]  
     burst = 10      
     size = burst 
     
-    step_df = df.iloc[0:st.session_state.size1]
-    if st.session_state.size1 ==0:
-        step_df = df.iloc[0:N]
+    # step_df = df.iloc[0:st.session_state.size1]
+    # if st.session_state.size1 ==0:
+    #     step_df = df.iloc[0:N]
 
-    lines = plot_animation(step_df)
-    line_plot = st.altair_chart(lines)
-    line_plot= line_plot.altair_chart(lines)
+    chart = plot_animation(df1, df2)
+    line_plot = st.altair_chart(chart)
+    line_plot= line_plot.altair_chart(chart)
 
-    N = df.shape[0]  
-    burst = 10      
-    size = burst    
-    if start_btn:
-        st.session_state.flag = 1
-        for i in range(1, N):
-            st.session_state.start=i
-            step_df = df.iloc[0:size]
-            lines = plot_animation(step_df)
-            line_plot = line_plot.altair_chart(lines)
-            size = i + burst 
-            st.session_state.size1 = size
-            time.sleep(.1)
+    # N = df.shape[0]  
+    # burst = 10      
+    # size = burst    
+    # if start_btn:
+    #     st.session_state.flag = 1
+    #     for i in range(1, N):
+    #         st.session_state.start=i
+    #         step_df = df.iloc[0:size]
+    #         lines = plot_animation(step_df)
+    #         line_plot = line_plot.altair_chart(lines)
+    #         size = i + burst 
+    #         st.session_state.size1 = size
+    #         time.sleep(.1)
 
-    elif resume_btn: 
-            st.session_state.flag = 1
-            for i in range( st.session_state.start,N):
-                st.session_state.start =i 
-                step_df = df.iloc[0:size]
-                lines = plot_animation(step_df)
-                line_plot = line_plot.altair_chart(lines)
-                st.session_state.size1 = size
-                size = i + burst
-                time.sleep(.1)
+    # elif resume_btn: 
+    #         st.session_state.flag = 1
+    #         for i in range( st.session_state.start,N):
+    #             st.session_state.start =i 
+    #             step_df = df.iloc[0:size]
+    #             lines = plot_animation(step_df)
+    #             line_plot = line_plot.altair_chart(lines)
+    #             st.session_state.size1 = size
+    #             size = i + burst
+    #             time.sleep(.1)
 
-    elif pause_btn:
-            st.session_state.flag =0
-            step_df = df.iloc[0:st.session_state.size1]
-            lines = plot_animation(step_df)
-            line_plot= line_plot.altair_chart(lines)
+    # elif pause_btn:
+    #         st.session_state.flag =0
+    #         step_df = df.iloc[0:st.session_state.size1]
+    #         lines = plot_animation(step_df)
+    #         line_plot= line_plot.altair_chart(lines)
 
 
 
-    if st.session_state.flag == 1:
-        for i in range( st.session_state.start,N):
-                st.session_state.start =i 
-                step_df = df.iloc[0:size]
-                lines = plot_animation(step_df)
-                line_plot = line_plot.altair_chart(lines)
-                st.session_state.size1 = size
-                size = i + burst
-                time.sleep(.1)
+    # if st.session_state.flag == 1:
+    #     for i in range( st.session_state.start,N):
+    #             st.session_state.start =i 
+    #             step_df = df.iloc[0:size]
+    #             lines = plot_animation(step_df)
+    #             line_plot = line_plot.altair_chart(lines)
+    #             st.session_state.size1 = size
+    #             size = i + burst
+    #             time.sleep(.1)
 
 #-----------------------------------------------------------------Spectrogram-----------------------------------------------------------------------------------------------------------------------------------
 def plot_spectrogram(data,ifft_file,sample_frequency):
