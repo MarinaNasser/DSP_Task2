@@ -72,27 +72,28 @@ def Fourier_transform(data, sample_frequency):
     return fft_sig, amplitude,phase,frequencies
 
 #----------------------------------------------------------------------Signal Modification-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------       
-def signal_modification(points_per_freq,max_freq,sliders_num,amplitude,sliders_data):
+def signal_modification(points_per_freq,max_freq,sliders_num,amplitude,sliders_data,flag):
     empty = st.empty()
     empty.empty()
-    for i in range(0,sliders_num):  
-        amplitude[int((max_freq/sliders_num)*(i)*points_per_freq) :int((max_freq/sliders_num)*(i+1)*points_per_freq)]*=sliders_data[i]
-    return amplitude,empty
+    if flag:
+        target_freq=max_freq/sliders_num
+        for i in range(0,sliders_num):  
+            amplitude[int(target_freq*(i)*points_per_freq) :int(target_freq*(i+1)*points_per_freq)]*=sliders_data[i]
+        return amplitude,empty
+    else:
+        ranges = [[300,650,3500,6000],[700,3500],[0,700,600,700,6000,17000],[0,700],[700,2500],[2500,4000]]
+        for instrumentIndex in range(len(ranges)):
+            for index in range(0,len(ranges[instrumentIndex]),2):
+                amplitude[int(ranges[instrumentIndex][index]*points_per_freq):int(ranges[instrumentIndex][index+1]*points_per_freq)]*=sliders_data[instrumentIndex]
+
 
 # ----------------------------------------------------------------------Musical Instruments Modification-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------           
-def instruments_modification(points_per_freq, amplitude,sliders_data):
-    empty = st.empty()
-    empty.empty()
+# def instruments_modification(points_per_freq, amplitude,sliders_data):
+#     empty = st.empty()
+#     empty.empty()
 
-
-    ranges = [[300,650,3500,6000],[700,3500],[0,700,600,700,6000,17000],[0,700],[700,2500],[2500,4000]]
-    for instrumentIndex in range(len(ranges)):
-        for index in range(0,len(ranges[instrumentIndex]),2):
-            amplitude[int(ranges[instrumentIndex][index]*points_per_freq):int(ranges[instrumentIndex][index+1]*points_per_freq)]*=sliders_data[instrumentIndex]
-
-
-  
-    return amplitude,empty
+    
+#     return amplitude,empty
 
 #-----------------------------------------------------------------Inverse Fourier-----------------------------------------------------------------------------------------------------------------------------------
 def inverse_fourier(mod_amplitude_axis_list,phase):
