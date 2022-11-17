@@ -29,11 +29,11 @@ def handle_uploaded_audio_file(uploaded_file):
     return samples, sample_frequency
    
 #----------------------------------------------------------------------Generate Sliders-------------------------------------------------------------------------------------------------------------------------------------------------------
-def generate_sliders(sliders_num,max_freq,flag=True):
+def generate_sliders(sliders_num,max_freq, flag = True):
         min_value=0
         max_value=0
         sliders_data = []
-        Names=["Xylo", "Contrabass" , "Drums", "Flute", "Violin", "Trombone","Bradycardia","Normal Sinus Rhythm", "Sinus Tachyardia","Atrial Tachycardia","S","Q"]
+        Names=["Xylo", "Contrabass" , "Drums", "Flute", "Violin", "Trombone","Normal Sinus Rhythm","Bradycardia", "Sinus Tachyardia","Ventricular Tachycardia","S","Q"]
         boundary = int(5)
         columns = st.columns(sliders_num)
         k=0
@@ -80,10 +80,10 @@ def signal_modification(points_per_freq,max_freq,sliders_num,amplitude,sliders_d
         amplitude[int((max_freq/sliders_num)*(i)*points_per_freq) :int((max_freq/sliders_num)*(i+1)*points_per_freq)]*=sliders_data[i]
     return amplitude,empty
 # ----------------------------------------------------------------------Musical Instruments Modification-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------           
-def instruments_modification(points_per_freq, amplitude,sliders_data):
+def instruments_modification(points_per_freq, amplitude,sliders_data ):
     empty = st.empty()
     empty.empty()
-    #------------------Xylo---------------
+    # ------------------Xylo---------------
     Xylo_range=[300,650,3500,6000]
     k=0
     while k<len(Xylo_range):
@@ -98,7 +98,7 @@ def instruments_modification(points_per_freq, amplitude,sliders_data):
         j+=2
     
     #------------------Drums---------------
-    Drums_range=[0,300,600,700,6000,17000]
+    Drums_range=[0,300 ,600,700,6000,17000]
     i=0
     while i<len(Drums_range):
         amplitude[int(Drums_range[i]*points_per_freq):int(Drums_range[i+1]*points_per_freq)]*=sliders_data[2]
@@ -121,6 +121,29 @@ def instruments_modification(points_per_freq, amplitude,sliders_data):
     while t<len(Trombone_range):
         amplitude[int(Trombone_range[t]*points_per_freq):int(Trombone_range[t+1]*points_per_freq)]*=sliders_data[5]
         t+=2
+    # bradycardia_range=[0,60]
+    # v=0
+    # while v<len(bradycardia_range):
+    #     amplitude[int(bradycardia_range[v]*points_per_freq):int(bradycardia_range[v+1]*points_per_freq)]*=sliders_data[0]
+    #     v+=2
+    # normal_range=[60,90]
+    # t=0
+    # while t<len(normal_range):
+    #     amplitude[int(normal_range[t]*points_per_freq):int(normal_range[t+1]*points_per_freq)]*=sliders_data[1]
+    #     t+=2
+    # sinus_range=[90,140]
+    # v=0
+    # while v<len(sinus_range):
+    #     amplitude[int(sinus_range[v]*points_per_freq):int(sinus_range[v+1]*points_per_freq)]*=sliders_data[2]
+    #     v+=2
+    # ventiricular_range=[140,240]
+    # t=0
+    # while t<len(ventiricular_range):
+    #     amplitude[int(ventiricular_range[t]*points_per_freq):int(ventiricular_range[t+1]*points_per_freq)]*=sliders_data[3]
+    #     t+=2
+
+
+ 
   
     return amplitude,empty
 

@@ -83,8 +83,9 @@ if not data==[]:
     if ext=='wav':
         st.markdown('## Modified Signal')
 
-    if  option=='Musical Instruments Mode' :
+    if  option=='Musical Instruments Mode':
         mod_amplitude_axis_list,empty= functions.instruments_modification(points_per_freq, amplitude,sliders_data)
+        
     else:
         mod_amplitude_axis_list,empty= functions.signal_modification(points_per_freq,max_freq,sliders_num,amplitude,sliders_data)
 #------------------------------------------------------------------------Static-plotting--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
