@@ -10,6 +10,10 @@ import librosa.display
 import altair as alt
 import time
 from scipy.misc import electrocardiogram
+import json
+
+basic_data = open('data.json')
+basic_data = json.load(basic_data)[0]
 
 #--------------------------------------------------------------------------Get Max Freq----------------------------------------------------------------
 def getFMax(xAxis,yAxis):
@@ -79,14 +83,16 @@ def signal_modification(points_per_freq,max_freq,sliders_num,amplitude,sliders_d
         target_freq=max_freq/sliders_num
         for i in range(0,sliders_num):  
             amplitude[int(target_freq*(i)*points_per_freq) :int(target_freq*(i+1)*points_per_freq)]*=sliders_data[i]
-        return amplitude,empty
+        
+   
     else:
         ranges = [[300,650,3500,6000],[700,3500],[0,700,600,700,6000,17000],[0,700],[700,2500],[2500,4000]]
         for instrumentIndex in range(len(ranges)):
             for index in range(0,len(ranges[instrumentIndex]),2):
                 amplitude[int(ranges[instrumentIndex][index]*points_per_freq):int(ranges[instrumentIndex][index+1]*points_per_freq)]*=sliders_data[instrumentIndex]
 
-
+    return amplitude,empty  
+    # ranges = [[0,60],[60,90],[90,140],[140,240]]    
 # ----------------------------------------------------------------------Musical Instruments Modification-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------           
 # def instruments_modification(points_per_freq, amplitude,sliders_data):
 #     empty = st.empty()

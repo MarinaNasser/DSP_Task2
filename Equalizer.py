@@ -5,10 +5,13 @@ import os.path # used to know file extension
 import IPython.display as ipd
 import functions 
 
+
 st.set_page_config(page_title= "Equalizer", layout="wide" ,page_icon=":musical_keyboard:")
 st.markdown("<h1 style='text-align: center; color:darkcyan;'>Signal Equalizer</h1>", unsafe_allow_html=True)
 with open("Equalizer.css")as source_des:
     st.markdown(f"<style>{source_des.read()} </style>", unsafe_allow_html=True)
+
+
 
 if 'start' not in st.session_state:
     st.session_state['start']=0
@@ -84,11 +87,7 @@ if not data==[]:
     if ext=='wav':
         st.markdown('## Modified Signal')
 
-    if  option=='Musical Instruments Mode':
-        mod_amplitude_axis_list,empty= functions.instruments_modification(points_per_freq, amplitude,sliders_data)
-        
-    else:
-        mod_amplitude_axis_list,empty= functions.signal_modification(points_per_freq,max_freq,sliders_num,amplitude,sliders_data)
+    mod_amplitude_axis_list,empty= functions.signal_modification(points_per_freq,max_freq,sliders_num,amplitude,sliders_data,flag)
 #------------------------------------------------------------------------Static-plotting--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
     # functions.plot_signal(time,data,frequencies,amplitude) #time-domain representation, This shows us the loudness (amplitude) of sound wave changing with time.    
