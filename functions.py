@@ -7,12 +7,11 @@ from scipy.signal import find_peaks
 import  streamlit_vertical_slider  as svs
 import librosa
 import librosa.display
-import itertools
 import altair as alt
 import time
 from scipy.misc import electrocardiogram
 
-#--------------------------------------------------------------------------get Fmax----------------------------------------------------------------
+#--------------------------------------------------------------------------Get Max Freq----------------------------------------------------------------
 def getFMax(xAxis,yAxis):
     amplitude = np.abs(sc.fft.rfft(yAxis))
     frequency = sc.fft.rfftfreq(len(xAxis), (xAxis[1]-xAxis[0]))
@@ -23,19 +22,120 @@ def getFMax(xAxis,yAxis):
         max_freq=1   
     return max_freq
 
-#-----------------------------------------------------------------------Read the Audiofile-----------------------------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------Read the Audio File-----------------------------------------------------------------------------------------------------------------------------
  
 def handle_uploaded_audio_file(uploaded_file):
-    samples, sample_rate=librosa.load(uploaded_file, sr=None, mono=True, offset=0.0, duration=None)
-    return samples, sample_rate
+    samples, sample_frequency=librosa.load(uploaded_file, sr=None, mono=True, offset=0.0, duration=None)
+    return samples, sample_frequency
    
-#------------------------------------------------------------------------Static-plotting--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------Generate Sliders-------------------------------------------------------------------------------------------------------------------------------------------------------
+def generate_sliders(sliders_num,max_freq,flag=True):
+        min_value=0
+        max_value=0
+        sliders_data = []
+        Names=["Xylo", "Contrabass" , "Drums", "Flute", "Violin", "Trombone","Bradycardia","Normal Sinus Rhythm", "Sinus Tachyardia","Atrial Tachycatdia","S","Q"]
+        boundary = int(50)
+        columns = st.columns(sliders_num)
+        k=0
+        for i in range(0, sliders_num):
+            
+            with columns[i]:
+                min_value = - boundary
+                max_value =  boundary
+                frequency_val= int(max_freq/sliders_num)*(i+1)
+                slider=svs.vertical_slider(key=i, default_value=1, step=1, min_value=min_value, max_value=max_value
+                )
+                if flag:
+                    st.write(f" { frequency_val } HZ")
+                else:
+                    if sliders_num == 6: k=k
+                    elif sliders_num == 4: k=6
+                    else : k=10
+                    with columns[i]:
+                        st.write(Names[k+i])
+                        
+                if slider == None:
+                    slider = 1
+                sliders_data.append(slider)
+        return sliders_data
+#----------------------------------------------------------------------FouFourier Transformrier-------------------------------------------------------------------------------------------------------------------------------------------------------
+def Fourier_transform(data, sample_frequency):
+    fft_sig = np.fft.fft(data)/len(data)  # Normalize data
+    fft_sig = fft_sig[range(int(len(data)/2))] # Exclude sampling frequency
+    amplitude= np.abs(fft_sig)
+    phase =np.angle(fft_sig) # return the angle of the complex argument
+    length_of_data=len(data)
+    values      = np.arange(int(length_of_data/2))
+    timePeriod  = length_of_data/sample_frequency
+    frequencies = values/timePeriod
 
-def plot_signal(time,data,freq,amp):
+    return fft_sig, amplitude,phase,frequencies
+
+#----------------------------------------------------------------------Signal Modification-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------       
+def signal_modification(points_per_freq,max_freq,sliders_num,amplitude,sliders_data):
+    empty = st.empty()
+    empty.empty()
+    # points_per_freq=len(frequencies) /max_freq
+    for i in range(0,sliders_num):  
+        amplitude[int((max_freq/sliders_num)*(i)*points_per_freq) :int((max_freq/sliders_num)*(i+1)*points_per_freq)]*=sliders_data[i]
+    return amplitude,empty
+# ----------------------------------------------------------------------Musical Instruments Modification-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------           
+def instruments_modification(points_per_freq, amplitude,sliders_data):
+    empty = st.empty()
+    empty.empty()
+    #------------------Xylo---------------
+    Xylo_range=[300,650,3500,6000]
+    k=0
+    while k<len(Xylo_range):
+        amplitude[int(Xylo_range[k]*points_per_freq):int(Xylo_range[k+1]*points_per_freq)]*=sliders_data[0]
+        k+=2
+
+    #------------------contrabass---------------
+    contrabass_range=[700,3500]
+    j=0
+    while j<len(contrabass_range):
+        amplitude[int(contrabass_range[j]*points_per_freq):int(contrabass_range[j+1]*points_per_freq)]*=sliders_data[1]
+        j+=2
+    
+    #------------------Drums---------------
+    Drums_range=[0,700,600,700,6000,17000]
+    i=0
+    while i<len(Drums_range):
+        amplitude[int(Drums_range[i]*points_per_freq):int(Drums_range[i+1]*points_per_freq)]*=sliders_data[2]
+        i+=2
+    #------------------Flute---------------
+    Flute_range=[0,700]
+    f=0
+    while f<len(Flute_range):
+        amplitude[int(Flute_range[f]*points_per_freq):int(Flute_range[f+1]*points_per_freq)]*=sliders_data[3]
+        f+=2
+    #------------------Violin---------------
+    Violin_range=[700,2500]
+    v=0
+    while v<len(Violin_range):
+        amplitude[int(Violin_range[v]*points_per_freq):int(Violin_range[v+1]*points_per_freq)]*=sliders_data[4]
+        v+=2
+      #------------------Trombone---------------
+    Trombone_range=[2500,4000]
+    t=0
+    while t<len(Trombone_range):
+        amplitude[int(Trombone_range[t]*points_per_freq):int(Trombone_range[t+1]*points_per_freq)]*=sliders_data[5]
+        t+=2
+  
+    return amplitude,empty
+
+#-----------------------------------------------------------------Inverse Fourier-----------------------------------------------------------------------------------------------------------------------------------
+def inverse_fourier(mod_amplitude_axis_list,phase):
+    modified_signal=np.multiply(mod_amplitude_axis_list,np.exp(1j*phase))
+    # ifft_file=sc.ifft(modified_signal)
+    ifft_file=np.fft.irfft(modified_signal)
+    return ifft_file
+#------------------------------------------------------------------------Static Plotting--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+def plot_signal(time,data,fft_time,ifft_file,frequencies,amplitude):
         # amp_dbs = 20 * np.log10(np.abs(amp))
-        SignalFigure, SignalAxis = plt.subplots(1, 2,figsize=(30, 10))
+        SignalFigure, SignalAxis = plt.subplots(1, 2,figsize=(40, 10))
         SignalAxis[0].plot(time,data)
-        SignalAxis[1].plot(freq,amp)
+        SignalAxis[1].plot(fft_time,ifft_file)
         SignalAxis[0].set_xlabel(xlabel='Time [sec]', size=25)
         SignalAxis[0].set_ylabel(ylabel='Amplitude', size=25)
         SignalAxis[0].set_title("Time representation", fontsize=30)
@@ -46,69 +146,6 @@ def plot_signal(time,data,freq,amp):
 
         st.pyplot(SignalFigure)
 
-#----------------------------------------------------------------------Fourier-------------------------------------------------------------------------------------------------------------------------------------------------------
-def Fourier_transform(data, samplerate):
-
-    fft_sig = np.fft.fft(data)/len(data)  # Normalize data
-    fft_sig = fft_sig[range(int(len(data)/2))] # Exclude sampling frequency
-    amplitude= np.abs(fft_sig)
-    phase =np.angle(fft_sig) # return the angle of the complex argument
-    # frequencies =sc.fft.rfftfreq(len(data),d=1/samplerate)  #return the discrete fourier transform sample frequencies
-    length_of_data=len(data)
-    values      = np.arange(int(length_of_data/2))
-    timePeriod  = length_of_data/samplerate
-    frequencies = values/timePeriod
-
-    return fft_sig, amplitude,phase,frequencies
-
-#----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-def bins_separation(frequency, amplitude, slidersNum):
-    freq_axis_list = []
-    amplitude_axis_list = []
-    bin_max_frequency_value = int(len(frequency)/slidersNum) # 50 60 70 80 90 100 120  len()=20  int(20/10)=2  
-    # st.write(len(frequency))
-    # st.write(bin_max_frequency_value)
-    i = 0
-    while(i < slidersNum):
-        freq_axis_list.append(
-            frequency[i*bin_max_frequency_value : (i+1)*bin_max_frequency_value])
-        amplitude_axis_list.append(
-            amplitude[i*bin_max_frequency_value : (i+1)*bin_max_frequency_value])
-        i = i+1
-    return freq_axis_list, amplitude_axis_list,bin_max_frequency_value
-#----------------------------------------------------------------------Generate Sliders-------------------------------------------------------------------------------------------------------------------------------------------------------
-def generate_sliders(fmax,frequency,points_per_freq,bin_max_frequency_value,slidersNum,flag=True):
-        min_value=0
-        max_value=0
-        sliders_data = []
-        boundary = int(50)
-        columns = st.columns(slidersNum)
-        for i in range(0, slidersNum):
-            with columns[i]:
-                min_value = - boundary
-                max_value =  boundary
-                # frequency_val = int(frequency[int(points_per_freq*(i+1))])
-                frequency_val= int(fmax/slidersNum)*(i+1)
-                # frequency_val = (i+1)*bin_max_frequency_value
-                slider=svs.vertical_slider(key=i, default_value=1, step=1, min_value=min_value, max_value=max_value)
-                if flag:
-                    st.write(f" { frequency_val } HZ")
-                else:
-                    if i==0:
-                        with columns[0]:
-                            st.write("Xylo")
-                    elif i==1:
-                        with columns[1]:
-                            st.write("Contrabass")
-                    elif i==2:
-                        with columns[2]:
-                            st.write("Drums")
-                 
-                if slider == None:
-                    slider = 1
-                sliders_data.append(slider)
-        return sliders_data
-
 #----------------------------------------------------------------------Dynamic Plotting-------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def plot_animation(df):
@@ -117,16 +154,15 @@ def plot_animation(df):
             x=alt.X('time', axis=alt.Axis(title='Time')),
             # y=alt.Y('amplitude', axis=alt.Axis(title='Amplitude')),
         ).properties(
-            width=500,
-            height=300
+            width=400,
+            height=150
         ).add_selection(
             brush).interactive()
-    
-    figure = chart1.encode(
-                  y=alt.Y('amplitude',axis=alt.Axis(title='Amplitude')))| chart1.encode(
-                  y=alt.Y('amplitude after processing',axis=alt.Axis(title='Amplitude after'))).add_selection(
-            brush)
 
+    figure = chart1.encode(
+                y=alt.Y('amplitude',axis=alt.Axis(title='Amplitude')))| chart1.encode(
+                y=alt.Y('amplitude after processing',axis=alt.Axis(title='Amplitude after'))).add_selection(
+            brush)
     return figure
 
 
@@ -142,8 +178,8 @@ def plotShow(data, idata,start_btn,pause_btn,resume_btn,sr):
                         'amplitude': data[:: 300],
                         'amplitude after processing': idata[::300]}, columns=[
                         'time', 'amplitude','amplitude after processing'])
-    N = df.shape[0]  # number of elements in the dataframe
-    burst = 10      # number of elements (months) to add to the plot
+    N = df.shape[0]  
+    burst = 10      
     size = burst 
     
     step_df = df.iloc[0:st.session_state.size1]
@@ -154,11 +190,9 @@ def plotShow(data, idata,start_btn,pause_btn,resume_btn,sr):
     line_plot = st.altair_chart(lines)
     line_plot= line_plot.altair_chart(lines)
 
-    # lines = plot_animation(df)
-    # line_plot = st.altair_chart(lines)
-    N = df.shape[0]  # number of elements in the dataframe
-    burst = 10      # number of elements (months) to add to the plot
-    size = burst    #   size of the current dataset
+    N = df.shape[0]  
+    burst = 10      
+    size = burst    
     if start_btn:
         st.session_state.flag = 1
         for i in range(1, N):
@@ -199,77 +233,8 @@ def plotShow(data, idata,start_btn,pause_btn,resume_btn,sr):
                 size = i + burst
                 time.sleep(.1)
 
-
-
-#----------------------------------------------------------------------Signal Modification-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------       
-    
-def signal_modification(sliders_data , List_amplitude_axis,slidersNum):
-    empty = st.empty()
-    empty.empty()
-    modified_bins=[]
-    for i in range(0,slidersNum):  
-        # modified_bins.append( 10**(sliders_data[i]/20) * List_amplitude_axis[i])
-        modified_bins.append( sliders_data[i] * List_amplitude_axis[i])
-
-    
-    mod_amplitude_axis_list=list(itertools.chain.from_iterable(modified_bins))
-    
-    return mod_amplitude_axis_list,empty
-
-
-def signal_modification(sliders_data,amplitude,slidersNum,frequencies,fmax,bin_max_frequency_value,freq_axis_list):
-    empty = st.empty()
-    empty.empty()
-    points_per_freq=len(frequencies) /fmax
-    for i in range(0,slidersNum-1):  
-        amplitude[int((fmax/slidersNum)*(i)*points_per_freq) :int((fmax/slidersNum)*(i+1)*points_per_freq)]*=sliders_data[i]
-    return amplitude,empty
-# ----------------------------------------------------------------------Musical Instruments-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------           
-
-def instruments( amplitude, frequencies, fmax,sliders_data):
-    empty = st.empty()
-    empty.empty()
-    points_per_freq=len(frequencies) /fmax
-
-    #------------------Xylo---------------
-    Xylo_range=[300,650,3500,6000]
-    k=0
-    while k<len(Xylo_range):
-        amplitude[int(Xylo_range[k]*points_per_freq):int(Xylo_range[k+1]*points_per_freq)]*=sliders_data[0]
-        k+=2
-
-    #------------------contrabass---------------
-    contrabass_range=[700,3500]
-    j=0
-    while j<len(contrabass_range):
-        amplitude[int(contrabass_range[j]*points_per_freq):int(contrabass_range[j+1]*points_per_freq)]*=sliders_data[1]
-        j+=2
-    
-    #------------------Drums---------------
-    Drums_range=[10,300,600,700,6000,17000]
-    i=0
-    while i<len(Drums_range):
-        amplitude[int(Drums_range[i]*points_per_freq):int(Drums_range[i+1]*points_per_freq)]*=sliders_data[2]
-        i+=2
-  
-    return amplitude,empty
-
-
-
-#-----------------------------------------------------------------Inverse Fourier-----------------------------------------------------------------------------------------------------------------------------------
-
-def inverse_fourier(mod_amplitude_axis_list,phase):
-
-
-    modified_signal=np.multiply(mod_amplitude_axis_list,np.exp(1j*phase))
-    # modified_signal=mod_amplitude_axis_list*np.cos(phase) +1j*mod_amplitude_axis_list*np.sin(phase) #list of complex no
-    ifft_file=np.fft.irfft(modified_signal)
-    # ifft_file=np.fft.ifft(modified_signal)
-    return ifft_file
-
-
 #-----------------------------------------------------------------Spectrogram-----------------------------------------------------------------------------------------------------------------------------------
-def plot_spectrogram(data,mod_amplitude_axis_list,sample_frequency):
+def plot_spectrogram(data,ifft_file,sample_frequency):
 
     fig2, ax = plt.subplots(1, 2, figsize=(30, 10))
    
@@ -279,14 +244,13 @@ def plot_spectrogram(data,mod_amplitude_axis_list,sample_frequency):
     ax[0].set_title("Original signal", fontsize=30)
     ax[0].tick_params(axis='both', which='both', labelsize=18)
 
-    ax[1].specgram(mod_amplitude_axis_list, Fs=sample_frequency)
+    ax[1].specgram(ifft_file, Fs=sample_frequency)
     ax[1].set_xlabel(xlabel='Time [sec]', size=25)
     ax[1].set_ylabel(ylabel='Frequency [Hz]', size=25)
     ax[1].set_title("Modified signal", fontsize=30)
     ax[1].tick_params(axis='both', which='both', labelsize=18)
     
     st.pyplot(fig2)
-
 
 #-----------------------------------------------------------------arrhythima-----------------------------------------------------------------------------------------------------------------------------------
   
