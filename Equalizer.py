@@ -113,15 +113,17 @@ if not data==[]:
         functions.plot_spectrogram(data,ifft_file,sample_frequency)
 
 #------------------------------------------------------------------------Dynamic-Plotting-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        column1, column2, column3, column4, column5, column6, column7, column8, column9, column10, column11, column12 = st.columns([1,1,1,1,1,1,1,1,1,1,1,1])
-        with column1:
-            start_btn  = st.button("▶️")
-        with column2:
-            pause_btn  = st.button("⏸")
-        with column3:
-            resume_btn = st.button("⏯")
-        data = data[:len(ifft_file)]
-        functions.plotShow(data,ifft_file, start_btn,pause_btn,resume_btn, sample_frequency)
+        # column1, column2, column3, column4, column5, column6, column7, column8, column9, column10, column11, column12 = st.columns([1,1,1,1,1,1,1,1,1,1,1,1])
+        # with column1:
+        #     start_btn  = st.button("▶️")
+        # with column2:
+        #     pause_btn  = st.button("⏸")
+        # with column3:
+        #     resume_btn = st.button("⏯")
+        # data = data[:len(ifft_file)]
+        # functions.plotShow(data,ifft_file, start_btn,pause_btn,resume_btn, sample_frequency)
+        resume= st.button('Play/Pause')
+        functions.plotShow(data[:len(ifft_file)],data,resume,sample_rate )
 
 
 
