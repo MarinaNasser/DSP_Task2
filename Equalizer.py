@@ -122,8 +122,8 @@ if not data==[]:
         #     resume_btn = st.button("⏯")
         # data = data[:len(ifft_file)]
         # functions.plotShow(data,ifft_file, start_btn,pause_btn,resume_btn, sample_frequency)
-        resume= st.button('Play/Pause')
-        functions.plotShow(data[:len(ifft_file)],data,resume,sample_rate )
+    resume= st.button('Play/Pause')
+    functions.plotShow(data[:len(ifft_file)],ifft_file,resume,sample_frequency )
 
 
 

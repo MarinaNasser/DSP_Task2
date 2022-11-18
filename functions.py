@@ -106,7 +106,7 @@ def signal_modification(points_per_freq,max_freq,sliders_num,amplitude,sliders_d
 def inverse_fourier(mod_amplitude_axis_list,phase):
     modified_signal=np.multiply(mod_amplitude_axis_list,np.exp(1j*phase))
     # ifft_file=sc.ifft(modified_signal)
-    ifft_file=np.fft.irfft(modified_signal)
+    ifft_file=np.float64(np.fft.irfft(modified_signal))
     return ifft_file
 #------------------------------------------------------------------------Static Plotting--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 def plot_signal(time,data,fft_time,ifft_file,frequencies,amplitude):
@@ -125,94 +125,6 @@ def plot_signal(time,data,fft_time,ifft_file,frequencies,amplitude):
         st.pyplot(SignalFigure)
 
 #----------------------------------------------------------------------Dynamic Plotting-------------------------------------------------------------------------------------------------------------------------------------------------------
-
-# def plot_animation(df):
-#     brush = alt.selection_interval()
-#     chart1 = alt.Chart(df).mark_line().encode(
-#             x=alt.X('time', axis=alt.Axis(title='Time')),
-#             # y=alt.Y('amplitude', axis=alt.Axis(title='Amplitude')),
-#         ).properties(
-#             width=500,
-#             height=300
-#         ).add_selection(
-#             brush).interactive()
-    
-#     figure = chart1.encode(
-#                   y=alt.Y('amplitude',axis=alt.Axis(title='Amplitude')))| chart1.encode(
-#                   y=alt.Y('amplitude after processing',axis=alt.Axis(title='Amplitude after'))).add_selection(
-#             brush)
-
-#     return figure
-
-
-
-
-# def plotShow(data, idata,start_btn,pause_btn,resume_btn,sr):
-
-#     time1 = len(data)/(sr)
-#     if time1>1:
-#         time1 = int(time1)
-#     time1 = np.linspace(0,time1,len(data))   
-#     df = pd.DataFrame({'time': time1[::90], 
-#                         'amplitude': data[:: 90],
-#                         'amplitude after processing': idata[::90]}, columns=[
-#                         'time', 'amplitude','amplitude after processing'])
-#     N = df.shape[0]  # number of elements in the dataframe
-#     burst = 10      # number of elements (months) to add to the plot
-#     size = burst 
-    
-#     step_df = df.iloc[:st.session_state.size1]
-#     if st.session_state.size1 ==0:
-#         step_df = df.iloc[0:N]
-
-#     lines = plot_animation(step_df)
-#     line_plot = st.altair_chart(lines)
-#     line_plot= line_plot.altair_chart(lines)
-
-#     # lines = plot_animation(df)
-#     # line_plot = st.altair_chart(lines)
-#     N = df.shape[0]  # number of elements in the dataframe
-#     burst = 10      # number of elements (months) to add to the plot
-#     size = burst    #   size of the current dataset
-#     if start_btn:
-#         st.session_state.flag = 1
-#         for i in range(1, N-burst):
-#             st.session_state.start=i
-#             step_df = df.iloc[i:size+i]
-#             lines = plot_animation(step_df)
-#             line_plot = line_plot.altair_chart(lines)
-#             size = i + burst 
-#             st.session_state.size1 = size+i
-#             time.sleep(.1)
-
-#     elif resume_btn: 
-#             st.session_state.flag = 1
-#             for i in range( st.session_state.start,N):
-#                 st.session_state.start =i 
-#                 step_df = df.iloc[0:size]
-#                 lines = plot_animation(step_df)
-#                 line_plot = line_plot.altair_chart(lines)
-#                 st.session_state.size1 = size
-#                 size = i + burst
-#                 time.sleep(.1)
-
-#     elif pause_btn:
-#             st.session_state.flag =0
-#             step_df = df.iloc[0:st.session_state.size1]
-#             lines = plot_animation(step_df)
-#             line_plot= line_plot.altair_chart(lines)
-
-
-
-#     if st.session_state.flag == 1:
-#         for i in range(st.session_state.start,N):
-#                 st.session_state.start =i 
-#                 step_df = df.iloc[0:size]
-#                 lines = plot_animation(step_df)
-#                 line_plot = line_plot.altair_chart(lines)
-#                 st.session_state.size1 = size
-#                 size = i + burst
-#                 time.sleep(.1)
 
 def plotShow(data, idata,resume_btn,sr):
     time1 = len(data)/(sr)
@@ -268,7 +180,7 @@ def plot_animation(df):
             brush).interactive()
     figure = chart1.encode(
                 y=alt.Y('amplitude',axis=alt.Axis(title='Amplitude')))| chart1.encode(
-                y=alt.Y('amplitude after processing',axis=alt.Axis(title='Amplitude after'))).add_selection(
+                y=alt.Y('amplitude after processing',axis=alt.Axis(title='Amplitude after processing'))).add_selection(
             brush)
     return figure
 #-----------------------------------------------------------------Spectrogram-----------------------------------------------------------------------------------------------------------------------------------
