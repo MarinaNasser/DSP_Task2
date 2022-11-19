@@ -30,6 +30,7 @@ data=[]
 flag=True
     
 if uploaded_file is not None:
+    
     file_name=uploaded_file.name
     ext = os.path.splitext(file_name)[1][1:]
 #---------------------------------------------------------------------csv----------------------------------------------------------------------------------------------------------------------------------------------
@@ -122,8 +123,8 @@ if not data==[]:
         #     resume_btn = st.button("⏯")
         # data = data[:len(ifft_file)]
         # functions.plotShow(data,ifft_file, start_btn,pause_btn,resume_btn, sample_frequency)
-        resume= st.button('Play/Pause')
-        functions.plotShow(data[:len(ifft_file)],data,resume,sample_rate )
+    resume= st.button('Play/Pause')
+    functions.plotShow(data[:len(ifft_file)],data,resume,sample_rate )
 
 
 
