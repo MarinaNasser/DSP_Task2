@@ -19,8 +19,7 @@ if 'size1' not in st.session_state:
     st.session_state['size1']=0
 if 'flag' not in st.session_state:
     st.session_state['flag'] = 0
-if 'fileName' not in st.session_state:
-    st.session_state['fileName'] = ''
+
 
 #------------------------------------------------------------------Upload_file----------------------------------------------------------------------------------------------------------------------------------------------
 option = st.sidebar.selectbox("Pick your sample!", options=[ "Uniform Range Mode", "Vowels Mode", "Musical Instruments Mode", "Biological Signal Abnormalities"])
@@ -31,13 +30,8 @@ data=[]
 flag=True
     
 if uploaded_file is not None:
-    if st.session_state.fileName != uploaded_file.name:
-        st.session_state.pause_play_flag = False
-        st.session_state['start']=0
-        st.session_state['size1']=0
-        st.session_state['flag'] = 0
+    
     file_name=uploaded_file.name
-    st.session_state.fileName = file_name
     ext = os.path.splitext(file_name)[1][1:]
 #---------------------------------------------------------------------csv----------------------------------------------------------------------------------------------------------------------------------------------
     if ext=='csv':
@@ -62,7 +56,7 @@ if uploaded_file is not None:
 elif option== 'Musical Instruments Mode' :
     functions.generate_sliders(6,10,1)
 elif option== 'Biological Signal Abnormalities' :
-    functions.generate_sliders(4,10,3)
+    functions.generate_sliders(2,10,3)
 elif option== 'Vowels Mode' :
     functions.generate_sliders(3,10,2)
 else:
@@ -83,7 +77,7 @@ if not data==[]:
         
 #----------------------------------------------------------------------Biological Signal Abnormalities-------------------------------------------------------------------------------------------------------------------------------------------------------
     elif option=='Biological Signal Abnormalities':
-        sliders_num=4
+        sliders_num=2
         mode=3
         
 #-----------------------------------------------------------------------Uniform Range Mode-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -130,7 +124,7 @@ if not data==[]:
         # data = data[:len(ifft_file)]
         # functions.plotShow(data,ifft_file, start_btn,pause_btn,resume_btn, sample_frequency)
     resume= st.button('Play/Pause')
-    functions.plotShow(data[:len(ifft_file)],ifft_file,resume,sample_frequency )
+    functions.plotShow(data[:len(ifft_file)],data,resume,sample_rate )
 
 
 

@@ -33,7 +33,7 @@ def generate_sliders(sliders_num,max_freq, mode):
         min_value=0
         max_value=0
         sliders_data = []
-        Names=["Xylo", "Contrabass" , "Drums", "Flute", "Violin", "Trombone","Normal Sinus Rhythm","Abnormalities", "Abnormalities","Abnormalities","S","Q","M"]
+        Names=["Xylo", "Contrabass" , "Drums", "Flute", "Violin", "Trombone","Normal Sinus Rhythm","Abnormalities"," S"," Q"," M"]
         boundary = int(5)
         columns = st.columns(sliders_num)
         k=0
@@ -49,8 +49,8 @@ def generate_sliders(sliders_num,max_freq, mode):
                     st.write(f" { frequency_val } HZ")
                 else:
                     if sliders_num == 6: k=k
-                    elif sliders_num == 4: k=6
-                    else : k=10
+                    elif sliders_num == 2: k=6
+                    else : k=8
                     with columns[i]:
                         st.write(Names[k+i])
                         
@@ -77,6 +77,11 @@ def signal_modification(points_per_freq,max_freq,sliders_num,amplitude,sliders_d
     empty.empty()
     if mode==1:
         ranges = [[300,650,3500,6000],[700,3500],[0,700,600,700,6000,17000],[0,700],[700,2500],[2500,4000]]
+    if mode==2:
+        ranges = [[4000,10000],[650,2700]]
+
+
+    if mode==2 or mode==1:
         for instrumentIndex in range(len(ranges)):
             for index in range(0,len(ranges[instrumentIndex]),2):
                 amplitude[int(ranges[instrumentIndex][index]*points_per_freq):int(ranges[instrumentIndex][index+1]*points_per_freq)]*=sliders_data[instrumentIndex]
@@ -89,19 +94,10 @@ def signal_modification(points_per_freq,max_freq,sliders_num,amplitude,sliders_d
         
    
     return amplitude,empty  
-    # ranges = [[0,60],[60,90],[90,140],[140,240]]    
-# ----------------------------------------------------------------------Musical Instruments Modification-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------           
-# def instruments_modification(points_per_freq, amplitude,sliders_data):
-#     empty = st.empty()
-#     empty.empty()
-
-    
-#     return amplitude,empty
 
 #-----------------------------------------------------------------Inverse Fourier-----------------------------------------------------------------------------------------------------------------------------------
 def inverse_fourier(mod_amplitude_axis_list,phase):
     modified_signal=np.multiply(mod_amplitude_axis_list,np.exp(1j*phase))
-    # ifft_file=sc.ifft(modified_signal)
     ifft_file=np.float64(np.fft.irfft(modified_signal))
     return ifft_file
 #------------------------------------------------------------------------Static Plotting--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -112,11 +108,11 @@ def plot_signal(time,data,fft_time,ifft_file,frequencies,amplitude):
         SignalAxis[1].plot(fft_time,ifft_file)
         SignalAxis[0].set_xlabel(xlabel='Time [sec]', size=25)
         SignalAxis[0].set_ylabel(ylabel='Amplitude', size=25)
-        SignalAxis[0].set_title("Time representation", fontsize=30)
+        SignalAxis[0].set_title("Orignal Signal", fontsize=30)
 
-        SignalAxis[1].set_xlabel(xlabel='time [sec]', size=25)
-        SignalAxis[1].set_ylabel(ylabel='Amplitude', size=25)
-        SignalAxis[1].set_title("time representation", fontsize=30)
+        SignalAxis[1].set_xlabel(xlabel='Time [sec]', size=25)
+        SignalAxis[1].set_ylabel(ylabel='Amplitude [dB]', size=25)
+        SignalAxis[1].set_title("Modified Signal", fontsize=30)
 
         st.pyplot(SignalFigure)
 
