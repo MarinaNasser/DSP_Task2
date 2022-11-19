@@ -37,7 +37,7 @@ def generate_sliders(sliders_num,max_freq, mode):
         min_value=0
         max_value=0
         sliders_data = []
-        Names=["Xylo", "Contrabass" , "Drums", "Flute", "Violin", "Trombone","Normal Sinus Rhythm","Abnormalities", "Abnormalities","Abnormalities","S","Q","M"]
+        Names=["Xylo", "Contrabass" , "Drums", "Flute", "Violin", "Trombone","Normal Sinus Rhythm","Abnormalities","S","Q","M"]
         boundary = int(5)
         columns = st.columns(sliders_num)
         k=0
@@ -53,8 +53,8 @@ def generate_sliders(sliders_num,max_freq, mode):
                     st.write(f" { frequency_val } HZ")
                 else:
                     if sliders_num == 6: k=k
-                    elif sliders_num == 4: k=6
-                    else : k=10
+                    elif sliders_num == 2: k=6
+                    else : k=8
                     with columns[i]:
                         st.write(Names[k+i])
                         
@@ -116,11 +116,11 @@ def plot_signal(time,data,fft_time,ifft_file,frequencies,amplitude):
         SignalAxis[1].plot(fft_time,ifft_file)
         SignalAxis[0].set_xlabel(xlabel='Time [sec]', size=25)
         SignalAxis[0].set_ylabel(ylabel='Amplitude', size=25)
-        SignalAxis[0].set_title("Time representation", fontsize=30)
+        SignalAxis[0].set_title("Orignal Signal", fontsize=30)
 
-        SignalAxis[1].set_xlabel(xlabel='Frequency [Hz]', size=25)
+        SignalAxis[1].set_xlabel(xlabel='Time [sec]', size=25)
         SignalAxis[1].set_ylabel(ylabel='Amplitude [dB]', size=25)
-        SignalAxis[1].set_title("Frequency representation", fontsize=30)
+        SignalAxis[1].set_title("Modified Signal", fontsize=30)
 
         st.pyplot(SignalFigure)
 

@@ -55,7 +55,7 @@ if uploaded_file is not None:
 elif option== 'Musical Instruments Mode' :
     functions.generate_sliders(6,10,1)
 elif option== 'Biological Signal Abnormalities' :
-    functions.generate_sliders(4,10,3)
+    functions.generate_sliders(2,10,3)
 elif option== 'Vowels Mode' :
     functions.generate_sliders(3,10,2)
 else:
@@ -76,7 +76,7 @@ if not data==[]:
         
 #----------------------------------------------------------------------Biological Signal Abnormalities-------------------------------------------------------------------------------------------------------------------------------------------------------
     elif option=='Biological Signal Abnormalities':
-        sliders_num=4
+        sliders_num=2
         mode=3
         
 #-----------------------------------------------------------------------Uniform Range Mode-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
