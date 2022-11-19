@@ -12,8 +12,16 @@ import time
 from scipy.misc import electrocardiogram
 import json
 
-basic_data = open('data.json')
-basic_data = json.load(basic_data)[0]
+
+def initial():
+    st.session_state.pause_play_flag = False
+    st.session_state['start']=0
+    st.session_state['size1']=0
+    st.session_state['i']=0
+    st.session_state['lines']=[]
+    st.session_state['flag'] = 1
+    st.session_state['flagStart'] = 0
+    st.session_state['startSize'] = 0
 
 #--------------------------------------------------------------------------Get Max Freq----------------------------------------------------------------
 def getFMax(xAxis,yAxis):
@@ -64,7 +72,7 @@ def generate_sliders(sliders_num,max_freq, mode):
         return sliders_data
 #----------------------------------------------------------------------FouFourier Transformrier-------------------------------------------------------------------------------------------------------------------------------------------------------
 def Fourier_transform(data, sample_frequency):
-    fft_sig = np.fft.fft(data)/len(data)  # Normalize data
+    fft_sig = np.fft.fft(data) # Normalize data
     fft_sig = fft_sig[range(int(len(data)/2))] # Exclude sampling frequency
     amplitude= np.abs(fft_sig)
     phase =np.angle(fft_sig) # return the angle of the complex argument
@@ -118,9 +126,9 @@ def plot_signal(time,data,fft_time,ifft_file,frequencies,amplitude):
         SignalAxis[0].set_ylabel(ylabel='Amplitude', size=25)
         SignalAxis[0].set_title("Time representation", fontsize=30)
 
-        SignalAxis[1].set_xlabel(xlabel='Frequency [Hz]', size=25)
-        SignalAxis[1].set_ylabel(ylabel='Amplitude [dB]', size=25)
-        SignalAxis[1].set_title("Frequency representation", fontsize=30)
+        SignalAxis[1].set_xlabel(xlabel='time [sec]', size=25)
+        SignalAxis[1].set_ylabel(ylabel='Amplitude', size=25)
+        SignalAxis[1].set_title("time representation", fontsize=30)
 
         st.pyplot(SignalFigure)
 
