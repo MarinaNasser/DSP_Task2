@@ -2,7 +2,7 @@
 
 Systems and biomedical engineering, Cairo University.
 Level 3, 1st semester.
-### Course: Digital signal processing, Task 1 (11/10/2022)
+### Course: Digital signal processing, Task 2 
 
 ### Members
 | Team Members' Names                                  | Section| B.N. |
