@@ -10,18 +10,6 @@ import librosa.display
 import altair as alt
 import time
 from scipy.misc import electrocardiogram
-import json
-
-
-def initial():
-    st.session_state.pause_play_flag = False
-    st.session_state['start']=0
-    st.session_state['size1']=0
-    st.session_state['i']=0
-    st.session_state['lines']=[]
-    st.session_state['flag'] = 1
-    st.session_state['flagStart'] = 0
-    st.session_state['startSize'] = 0
 
 #--------------------------------------------------------------------------Get Max Freq----------------------------------------------------------------
 def getFMax(xAxis,yAxis):
@@ -70,7 +58,7 @@ def generate_sliders(sliders_num,max_freq, mode):
                     slider = 1
                 sliders_data.append(slider)
         return sliders_data
-#----------------------------------------------------------------------FouFourier Transformrier-------------------------------------------------------------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------Fourier Transformrier-------------------------------------------------------------------------------------------------------------------------------------------------------
 def Fourier_transform(data, sample_frequency):
     fft_sig = np.fft.fft(data) # Normalize data
     fft_sig = fft_sig[range(int(len(data)/2))] # Exclude sampling frequency
@@ -140,7 +128,7 @@ def plotShow(data, idata,resume_btn,sr):
                         'amplitude after processing': idata[::300]}, columns=[
                         'time', 'amplitude','amplitude after processing'])
     N = df.shape[0]  # number of elements in the dataframe
-    burst = 10      # number of elements (months) to add to the plot
+    burst = 10      
     size = burst 
     step_df = df.iloc[:st.session_state.size1]
     if st.session_state.size1 ==0:
