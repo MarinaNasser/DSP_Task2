@@ -92,9 +92,6 @@ if not data==[]:
         st.markdown('## Modified Signal')
 
     mod_amplitude_axis_list,empty= functions.signal_modification(points_per_freq,max_freq,sliders_num,amplitude,sliders_data,mode)
-#------------------------------------------------------------------------Static-plotting--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-    # functions.plot_signal(time,data,frequencies,amplitude) #time-domain representation, This shows us the loudness (amplitude) of sound wave changing with time.    
 
 #------------------------------------------------------------------------Inverse-Fourier-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     phase=phase[:len(mod_amplitude_axis_list):1]
@@ -105,26 +102,24 @@ if not data==[]:
     if ext=='wav':
         modified_audio = ipd.Audio(ifft_file, rate=sample_frequency)
         empty.write(modified_audio)
-
-    functions.plot_signal(time,data,fft_time,ifft_file,frequencies,amplitude)     
-#---------------------------------------------------------------------------Spectrogram----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    st.sidebar.markdown('## Spectrogram')
-    spec1 = st.sidebar.checkbox("Show", key=2)
-    if spec1:
-        functions.plot_spectrogram(data,ifft_file,sample_frequency)
+#------------------------------------------------------------------------Static-plotting--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    static = st.sidebar.checkbox("Show", key=2)
+    if static:
+        functions.plot_signal(time,data,fft_time,ifft_file,frequencies,amplitude)    
 
 #------------------------------------------------------------------------Dynamic-Plotting-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        # column1, column2, column3, column4, column5, column6, column7, column8, column9, column10, column11, column12 = st.columns([1,1,1,1,1,1,1,1,1,1,1,1])
-        # with column1:
-        #     start_btn  = st.button("▶️")
-        # with column2:
-        #     pause_btn  = st.button("⏸")
-        # with column3:
-        #     resume_btn = st.button("⏯")
-        # data = data[:len(ifft_file)]
-        # functions.plotShow(data,ifft_file, start_btn,pause_btn,resume_btn, sample_frequency)
-    resume= st.button('Play/Pause')
-    functions.plotShow(data[:len(ifft_file)],ifft_file,resume,sample_frequency )
+    if not (option=='Biological Signal Abnormalities' or option=='Uniform Range Mode'):
+        dynamic = st.sidebar.checkbox("Show", key=2)
+        if dynamic: 
+            resume= st.button('Play/Pause')
+            functions.plotShow(data[:len(ifft_file)],ifft_file,resume,sample_frequency )
+
+
+#---------------------------------------------------------------------------Spectrogram----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    # st.sidebar.markdown('## Spectrogram')
+    spec = st.sidebar.checkbox("Show", key=2)
+    if spec:
+        functions.plot_spectrogram(data,ifft_file,sample_frequency)
 
 
 
