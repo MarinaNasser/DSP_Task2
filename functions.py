@@ -77,11 +77,6 @@ def signal_modification(points_per_freq,max_freq,sliders_num,amplitude,sliders_d
     empty.empty()
     if mode==1:
         ranges = [[300,650,3500,6000],[700,3500],[0,700,600,700,6000,17000],[0,700],[700,2500],[2500,4000]]
-    if mode==2:
-        ranges = [[4000,10000],[650,2700]]
-
-
-    if mode==2 or mode==1:
         for instrumentIndex in range(len(ranges)):
             for index in range(0,len(ranges[instrumentIndex]),2):
                 amplitude[int(ranges[instrumentIndex][index]*points_per_freq):int(ranges[instrumentIndex][index+1]*points_per_freq)]*=sliders_data[instrumentIndex]
@@ -94,7 +89,6 @@ def signal_modification(points_per_freq,max_freq,sliders_num,amplitude,sliders_d
         
    
     return amplitude,empty  
-
 #-----------------------------------------------------------------Inverse Fourier-----------------------------------------------------------------------------------------------------------------------------------
 def inverse_fourier(mod_amplitude_axis_list,phase):
     modified_signal=np.multiply(mod_amplitude_axis_list,np.exp(1j*phase))
@@ -178,7 +172,7 @@ def plot_animation(df):
 #-----------------------------------------------------------------Spectrogram-----------------------------------------------------------------------------------------------------------------------------------
 def plot_spectrogram(data,ifft_file,sample_frequency):
 
-    fig2, ax = plt.subplots(1, 2, figsize=(30, 10))
+    fig2, ax = plt.subplots(1, 2, figsize=(30, 7))
    
     ax[0].specgram(data, Fs=sample_frequency)
     ax[0].set_xlabel(xlabel='Time [sec]', size=25)

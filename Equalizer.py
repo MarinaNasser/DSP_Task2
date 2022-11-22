@@ -7,7 +7,7 @@ import functions
 
  
 st.set_page_config(page_title= "Equalizer", layout="wide" ,page_icon=":musical_keyboard:")
-st.markdown("<h1 style='text-align: center; color:darkcyan;'>Signal Equalizer</h1>", unsafe_allow_html=True)
+st.sidebar.markdown("<h1 style='text-align: center; color:darkcyan;'>Signal Equalizer</h1>", unsafe_allow_html=True)
 with open("Equalizer.css")as source_des:
     st.markdown(f"<style>{source_des.read()} </style>", unsafe_allow_html=True)
 
@@ -28,6 +28,7 @@ uploaded_file = st.sidebar.file_uploader("uploader",key="uploaded_file",label_vi
 
 data=[]
 flag=True
+ranges=[]
     
 if uploaded_file is not None:
     
@@ -69,11 +70,13 @@ if not data==[]:
     if  option=='Musical Instruments Mode' :
         sliders_num=6
         mode=1
+        ranges = [[300,650,3500,6000],[700,3500],[0,700,600,700,6000,17000],[0,700],[700,2500],[2500,4000]]
         
 #-----------------------------------------------------------------------Vowels---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     elif option=='Vowels Mode':
         sliders_num=3
         mode=2
+        ranges = [[4000,10000],[650,2700]]
         
 #----------------------------------------------------------------------Biological Signal Abnormalities-------------------------------------------------------------------------------------------------------------------------------------------------------
     elif option=='Biological Signal Abnormalities':
@@ -88,8 +91,10 @@ if not data==[]:
 #-------------------------------------------------------generate sliders/signal-modification--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     points_per_freq=len(frequencies) /max_freq
     sliders_data= functions.generate_sliders(sliders_num,max_freq,mode)
+    text_column,audio_column=st.columns([1,1])
     if ext=='wav':
-        st.markdown('## Modified Signal')
+        with text_column:
+            st.markdown('### Modified Signal')
 
     mod_amplitude_axis_list,empty= functions.signal_modification(points_per_freq,max_freq,sliders_num,amplitude,sliders_data,mode)
 
@@ -100,16 +105,19 @@ if not data==[]:
     fft_time = np.linspace(0,duration_fft,len(ifft_file))
   
     if ext=='wav':
-        modified_audio = ipd.Audio(ifft_file, rate=sample_frequency)
-        empty.write(modified_audio)
+        with audio_column:
+            modified_audio = ipd.Audio(ifft_file, rate=sample_frequency)
+            empty.write(modified_audio)
+         
+        
 #------------------------------------------------------------------------Static-plotting--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    static = st.sidebar.checkbox("Show", key=2)
+    static = st.sidebar.checkbox("Static" , value=True)
     if static:
         functions.plot_signal(time,data,fft_time,ifft_file,frequencies,amplitude)    
 
 #------------------------------------------------------------------------Dynamic-Plotting-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     if not (option=='Biological Signal Abnormalities' or option=='Uniform Range Mode'):
-        dynamic = st.sidebar.checkbox("Show", key=2)
+        dynamic = st.sidebar.checkbox("Dynamic")
         if dynamic: 
             resume= st.button('Play/Pause')
             functions.plotShow(data[:len(ifft_file)],ifft_file,resume,sample_frequency )
@@ -117,7 +125,7 @@ if not data==[]:
 
 #---------------------------------------------------------------------------Spectrogram----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     # st.sidebar.markdown('## Spectrogram')
-    spec = st.sidebar.checkbox("Show", key=2)
+    spec = st.sidebar.checkbox("Spectrogram")
     if spec:
         functions.plot_spectrogram(data,ifft_file,sample_frequency)
 
